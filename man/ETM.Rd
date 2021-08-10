@@ -31,11 +31,13 @@ ETM(
 an object of class ETM which is a torch \code{nn_module} containing o.a
 \itemize{
   \item{num_topics: }{the number of topics}
-  \item{TODO.: }{TODO.}
+  \item{vocab: }{character vector with the terminology used in the model}
+  \item{rho: }{The word embeddings}
+  \item{alphas: }{The topic embeddings}
 }
 }
 \description{
-ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). 
+ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). \cr\cr
 It models each word with a categorical distribution whose natural parameter is the inner product between
 a word embedding and an embedding of its assigned topic.\cr
 The model is fitted using an amortized variational inference algorithm on top of libtorch.
@@ -43,23 +45,79 @@ The model is fitted using an amortized variational inference algorithm on top of
 \section{Methods}{
 
 \describe{
-  \item{\code{get_beta()}}{softmax-transformed inner product of word embedding and topic embeddings}
-  \item{\code{fit(TODO)}}{fit the model on a document term matrix}
+  \item{\code{get_beta()}}{Softmax-transformed inner product of word embedding and topic embeddings}
+  \item{\code{fit(data, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10)}}{Fit the model on a document term matrix by splitting the data in 70/30 training/test set and updating the model weights.}
 }
 }
 
 \section{Arguments}{
 
 \describe{
- \item{x}{TODO.}
- \item{x}{TODO. In \code{dgCMatrix} format}
+ \item{data}{bag of words document term matrix in \code{dgCMatrix} format}
+ \item{epoch}{integer with the number of iterations to train}
+ \item{batch_size}{integer with the size of the batch}
+ \item{normalize}{logical indicating to normalize the bag of words data}
+ \item{clip}{number between 0 and 1 indicating to do gradient clipping - passed on to \code{\link[torch]{nn_utils_clip_grad_norm_}}}
+ \item{lr_anneal_factor}{divide the learning rate by this factor when the loss on the test set is monotonic for at least \code{lr_anneal_nonmono} training iterations}
+ \item{lr_anneal_nonmono}{number of iterations after which learning rate annealing is executed if the loss does not decreases}
+ \item{top_n}{integer with number of most relevant words for each topic to extract}
 }
 }
 
 \examples{
-library(torch)
-library(word2vec)
 library(ETM)
+library(word2vec)
+library(udpipe)
+data(brussels_reviews_anno, package = "udpipe")
+##
+## Toy example with pretrained embeddings
+##
+
+## a. build word2vec model
+x          <- subset(brussels_reviews_anno, language \%in\% "nl")
+x          <- paste.data.frame(x, term = "lemma", group = "doc_id") 
+set.seed(123456789)
+w2v        <- word2vec(x = x$lemma, dim = 15, iter = 20, type = "cbow", min_count = 5)
+embeddings <- as.matrix(w2v)
+
+## b. build document term matrix on nouns + adjectives, align with the embedding terms
+dtm <- subset(brussels_reviews_anno, language \%in\% "nl" & upos \%in\% c("NOUN", "ADJ"))
+dtm <- document_term_frequencies(dtm, document = "doc_id", term = "lemma")
+dtm <- document_term_matrix(dtm)
+dtm <- dtm_conform(dtm, columns = rownames(embeddings))
+
+## create and fit an embedding topic model - 8 topics, theta 100-dimensional
+set.seed(987654321)
+torch_manual_seed(987654321)
+model       <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
+optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
+overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
+
+lastbatch   <- subset(overview$loss, overview$loss$batch_is_last == TRUE)
+plot(lastbatch$epoch, lastbatch$loss)
+plot(overview$loss_test)
+
+## show top words in each topic
+terminology <- model$topwords(top_n = 7)
+terminology
+
+##
+## Toy example without pretrained word embeddings
+##
+set.seed(987654321)
+torch_manual_seed(987654321)
+model       <- ETM(k = 8, dim = 100, embeddings = 15, dropout = 0.5)
+optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
+overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
+terminology <- model$topwords(top_n = 7)
+terminology
+
+
+
+\dontshow{
+##
+## Another example using fit_original
+##
 data(ng20, package = "ETM")
 vocab  <- ng20$vocab
 tokens <- ng20$bow_tr$tokens
@@ -74,9 +132,9 @@ traindata <- list(tokens = tokens, counts = counts, vocab = vocab)
 test1     <- list(tokens = ng20$bow_ts_h1$tokens, counts = ng20$bow_ts_h1$counts, vocab = vocab)
 test2     <- list(tokens = ng20$bow_ts_h2$tokens, counts = ng20$bow_ts_h2$counts, vocab = vocab)
 
-out <- model$fit(data = traindata, test1 = test1, test2 = test2, epoch = 4, 
+out <- model$fit_original(data = traindata, test1 = test1, test2 = test2, epoch = 4, 
                  optimizer = optimizer, batch_size = 1000, 
-                 lr_damping_factor = 4, nonmono = 10)
+                 lr_anneal_factor = 4, lr_anneal_nonmono = 10)
 test <- subset(out$loss, out$loss$batch_is_last == TRUE)
 plot(test$epoch, test$loss)
 
@@ -86,40 +144,7 @@ x <- as.matrix(model$get_beta())
 
 terminology <- model$topwords(top_n = 4)
 terminology
-
-
-##
-## Toy example with pretrained embeddings
-##
-library(udpipe)
-library(word2vec)
-data(brussels_reviews_anno, package = "udpipe")
-x          <- subset(brussels_reviews_anno, language \%in\% "nl")
-x          <- paste.data.frame(x, term = "lemma", group = "doc_id") 
-set.seed(123456789)
-model      <- word2vec(x = x$lemma, dim = 15, iter = 20)
-embeddings <- as.matrix(model)
-
-dtm <- subset(brussels_reviews_anno, language \%in\% "nl" & upos \%in\% c("NOUN", "ADJ"))
-dtm <- document_term_frequencies(dtm, document = "doc_id", term = "lemma")
-dtm <- document_term_matrix(dtm)
-dtm <- dtm_conform(dtm, columns = rownames(embeddings))
-
-model     <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
-optimizer <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
-
-traindata <- as_tokencounts(dtm[-c(1:50), ])
-test1     <- as_tokencounts(dtm[1:25, ])
-test2     <- as_tokencounts(dtm[26:50, ])
-out <- model$fit(data = traindata, test1 = test1, test2 = test2, epoch = 40, 
-                 optimizer = optimizer, batch_size = 1000, 
-                 lr_damping_factor = 4, nonmono = 10)
-plot(out$loss_test)
-test <- subset(out$loss, out$loss$batch_is_last == TRUE)
-plot(test$epoch, test$loss)
-plot(test$epoch, test$nelbo)
-terminology <- model$topwords(top_n = 7)
-terminology
+}
 }
 \references{
 \url{https://arxiv.org/pdf/1907.04907.pdf}
