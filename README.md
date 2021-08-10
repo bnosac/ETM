@@ -9,7 +9,7 @@ This repository contains an R package which is an implementation of ETM
 
 ### Installation
 
-This R package not on CRAN, just install it with `remotes::install_github('bnosac/ETM')`
+This R package not on CRAN, for now, you can install it with `remotes::install_github('bnosac/ETM')`, once the package has some plotting functionalities, I'll push it on CRAN.
 
 ### Example
 
