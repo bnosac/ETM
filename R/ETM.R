@@ -15,6 +15,7 @@
 #' \itemize{
 #'   \item{num_topics: }{the number of topics}
 #'   \item{vocab: }{character vector with the terminology used in the model}
+#'   \item{vocab_size: }{the number of words in \code{vocab}}
 #'   \item{rho: }{The word embeddings}
 #'   \item{alphas: }{The topic embeddings}
 #' }
@@ -57,6 +58,7 @@
 #' dtm <- document_term_frequencies(dtm, document = "doc_id", term = "lemma")
 #' dtm <- document_term_matrix(dtm)
 #' dtm <- dtm_conform(dtm, columns = rownames(embeddings))
+#' dtm <- dtm[dtm_rowsums(dtm) > 0, ]
 #' 
 #' ## create and fit an embedding topic model - 8 topics, theta 100-dimensional
 #' set.seed(4321)
@@ -64,6 +66,7 @@
 #' model       <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
 #' optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 #' overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
+#' scores      <- predict(model, dtm, type = "topics")
 #' 
 #' lastbatch   <- subset(overview$loss, overview$loss$batch_is_last == TRUE)
 #' plot(lastbatch$epoch, lastbatch$loss)
@@ -389,7 +392,6 @@ ETM <- nn_module(
   fit_original = function(data, test1, test2, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10){
     epochs       <- epoch
     anneal_lr    <- lr_anneal_factor > 0
-    print(anneal_lr)
     best_epoch   <- 0
     best_val_ppl <- 1e9
     all_val_ppls <- c()
@@ -464,3 +466,51 @@ split_train_test <- function(x, train_pct = 0.7){
 
 
 
+#' @title Get predictions from an embedding topic model
+#' @description Predict functionality for an \code{ETM} object
+#' @param object an object of class \code{ETM}
+#' @param type either 'topics' or 'terms'
+#' @param newdata bag of words document term matrix in \code{dgCMatrix} format
+#' @param batch_size integer with the size of the batch
+#' @param normalize logical indicating to normalize the bag of words data
+#' @export
+predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE){
+  type <- match.arg(type)
+  if(type == "terms"){
+    .NotYetImplemented()
+  }else{
+    x          <- as_tokencounts(newdata)
+    tokens     <- x$tokens
+    counts     <- x$counts
+    num_topics <- object$num_topics
+    vocab_size <- object$vocab_size
+    
+    preds <- list()
+    with_no_grad({
+      indices = torch_tensor(seq_along(tokens))
+      indices = torch_split(indices, batch_size)
+      thetaWeightedAvg = torch_zeros(1, num_topics)
+      cnt = 0
+      for(i in seq_along(indices)){
+        ## get theta from first half of docs
+        ind          <- indices[[i]]
+        data_batch = get_batch(tokens, counts, ind, vocab_size)
+        sums <- data_batch$sum(2)$unsqueeze(2)
+        cnt = cnt + as.numeric(sums$sum(1)$squeeze())
+        if(normalize){
+          normalized_data_batch <- data_batch / sums
+        }else{
+          normalized_data_batch <- data_batch
+        }
+        theta <- object$get_theta(normalized_data_batch)$theta
+        preds[[i]] <- as.matrix(theta)
+        weighed_theta = sums * theta
+        thetaWeightedAvg = thetaWeightedAvg + weighed_theta$sum(1)$unsqueeze(1)
+      }
+      thetaWeightedAvg = thetaWeightedAvg$squeeze() / cnt
+    })
+    preds <- do.call(rbind, preds)
+    rownames(preds) <- rownames(newdata)
+    preds
+  }
+}

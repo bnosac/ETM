@@ -32,6 +32,7 @@ an object of class ETM which is a torch \code{nn_module} containing o.a.
 \itemize{
   \item{num_topics: }{the number of topics}
   \item{vocab: }{character vector with the terminology used in the model}
+  \item{vocab_size: }{the number of words in \code{vocab}}
   \item{rho: }{The word embeddings}
   \item{alphas: }{The topic embeddings}
 }
@@ -86,6 +87,7 @@ dtm <- subset(brussels_reviews_anno, language \%in\% "nl" & upos \%in\% c("NOUN"
 dtm <- document_term_frequencies(dtm, document = "doc_id", term = "lemma")
 dtm <- document_term_matrix(dtm)
 dtm <- dtm_conform(dtm, columns = rownames(embeddings))
+dtm <- dtm[dtm_rowsums(dtm) > 0, ]
 
 ## create and fit an embedding topic model - 8 topics, theta 100-dimensional
 set.seed(4321)
@@ -93,6 +95,7 @@ torch_manual_seed(4321)
 model       <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
 optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
+scores      <- predict(model, dtm, type = "topics")
 
 lastbatch   <- subset(overview$loss, overview$loss$batch_is_last == TRUE)
 plot(lastbatch$epoch, lastbatch$loss)
