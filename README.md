@@ -7,6 +7,18 @@ This repository contains an R package which is an implementation of ETM
     - The model is fitted using an amortized variational inference algorithm on top of libtorch (https://torch.mlverse.org)
 - The techniques are explained in detail in the paper: "Topic Modelling in Embedding Spaces" by Adji B. Dieng, Francisco J. R. Ruiz and David M. Blei, available at https://arxiv.org/pdf/1907.04907.pdf 
 
+### Installation
+
+This R package not on CRAN, just install it with `remotes::install_github('bnosac/ETM')`
+
+### Example
+
+Examples are provided in the help of the ETM function
+
+```
+library(ETM)
+?ETM
+```
 
 ## Support in text mining
 
