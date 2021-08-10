@@ -9,7 +9,8 @@
   newdata,
   type = c("topics", "terms"),
   batch_size = nrow(newdata),
-  normalize = TRUE
+  normalize = TRUE,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@
 \item{batch_size}{integer with the size of the batch}
 
 \item{normalize}{logical indicating to normalize the bag of words data}
+
+\item{...}{not used}
 }
 \description{
 Predict functionality for an \code{ETM} object

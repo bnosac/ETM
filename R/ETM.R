@@ -473,8 +473,9 @@ split_train_test <- function(x, train_pct = 0.7){
 #' @param newdata bag of words document term matrix in \code{dgCMatrix} format
 #' @param batch_size integer with the size of the batch
 #' @param normalize logical indicating to normalize the bag of words data
+#' @param ... not used
 #' @export
-predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE){
+predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE, ...){
   type <- match.arg(type)
   if(type == "terms"){
     .NotYetImplemented()
