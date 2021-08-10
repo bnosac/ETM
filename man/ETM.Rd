@@ -28,7 +28,7 @@ ETM(
 \item{vocab}{a character vector with the words from the vocabulary. Defaults to the rownames of the \code{embeddings} argument.}
 }
 \value{
-an object of class ETM which is a torch \code{nn_module} containing o.a
+an object of class ETM which is a torch \code{nn_module} containing o.a.
 \itemize{
   \item{num_topics: }{the number of topics}
   \item{vocab: }{character vector with the terminology used in the model}
@@ -37,7 +37,7 @@ an object of class ETM which is a torch \code{nn_module} containing o.a
 }
 }
 \description{
-ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). \cr\cr
+ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). \cr
 It models each word with a categorical distribution whose natural parameter is the inner product between
 a word embedding and an embedding of its assigned topic.\cr
 The model is fitted using an amortized variational inference algorithm on top of libtorch.
@@ -54,6 +54,7 @@ The model is fitted using an amortized variational inference algorithm on top of
 
 \describe{
  \item{data}{bag of words document term matrix in \code{dgCMatrix} format}
+ \item{optimizer}{object of class \code{torch_Optimizer}}
  \item{epoch}{integer with the number of iterations to train}
  \item{batch_size}{integer with the size of the batch}
  \item{normalize}{logical indicating to normalize the bag of words data}
@@ -76,7 +77,7 @@ data(brussels_reviews_anno, package = "udpipe")
 ## a. build word2vec model
 x          <- subset(brussels_reviews_anno, language \%in\% "nl")
 x          <- paste.data.frame(x, term = "lemma", group = "doc_id") 
-set.seed(123456789)
+set.seed(4321)
 w2v        <- word2vec(x = x$lemma, dim = 15, iter = 20, type = "cbow", min_count = 5)
 embeddings <- as.matrix(w2v)
 
@@ -87,8 +88,8 @@ dtm <- document_term_matrix(dtm)
 dtm <- dtm_conform(dtm, columns = rownames(embeddings))
 
 ## create and fit an embedding topic model - 8 topics, theta 100-dimensional
-set.seed(987654321)
-torch_manual_seed(987654321)
+set.seed(4321)
+torch_manual_seed(4321)
 model       <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
 optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
@@ -104,9 +105,9 @@ terminology
 ##
 ## Toy example without pretrained word embeddings
 ##
-set.seed(987654321)
-torch_manual_seed(987654321)
-model       <- ETM(k = 8, dim = 100, embeddings = 15, dropout = 0.5)
+set.seed(4321)
+torch_manual_seed(4321)
+model       <- ETM(k = 8, dim = 100, embeddings = 15, dropout = 0.5, vocab = colnames(dtm))
 optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
 terminology <- model$topwords(top_n = 7)
