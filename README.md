@@ -84,7 +84,7 @@ dim(dtm)
 
 ```
 if(FALSE){
-  anno  <- udpipe(head(x), "dutch-alpino", trace = 10, parallel.cores = 1)
+  anno  <- udpipe(x, "dutch-alpino", trace = 10, parallel.cores = 1)
   dtm   <- document_term_frequencies(x = subset(anno, upos %in% c("NOUN", "PROPN")), 
                                      document = "doc_id", term = "lemma")
   dtm   <- document_term_matrix(dtm)
