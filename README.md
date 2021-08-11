@@ -70,6 +70,7 @@ $belastingen
 
 - Create a bag of words document term matrix (using the udpipe package but other R packages provide similar functionalities)
 - Keep only the top 50% terms with the highest TFIDF
+- Make sure document/term/matrix and the embedding matrix have the same vocabulary
     
 ```
 library(udpipe)
@@ -77,28 +78,12 @@ dtm   <- strsplit.data.frame(x, group = "doc_id", term = "text", split = " ")
 dtm   <- document_term_frequencies(dtm)
 dtm   <- document_term_matrix(dtm)
 dtm   <- dtm_remove_tfidf(dtm, prob = 0.50)
-dim(dtm)
-```
 
-- Another approach could be - selecting lemma's of only nouns and proper nouns to cluster upon. Up to you to decide
-
-```
-if(FALSE){
-  anno  <- udpipe(x, "dutch-alpino", trace = 10, parallel.cores = 1)
-  dtm   <- document_term_frequencies(x = subset(anno, upos %in% c("NOUN", "PROPN")), 
-                                     document = "doc_id", term = "lemma")
-  dtm   <- document_term_matrix(dtm)
-}
-```
-
-- Make sure document/term/matrix and the embedding matrix have the same vocabulary
-    
-``` 
 vocab        <- intersect(rownames(embeddings), colnames(dtm))
-length(vocab)
-embeddings   <- embeddings[vocab, ]
-dtm          <- dtm[, vocab]
-dtm          <- dtm[dtm_rowsums(dtm) > 0, ]
+embeddings   <- dtm_conform(embeddings, rows = vocab)
+dtm          <- dtm_conform(dtm,     columns = vocab)
+dim(dtm)
+dim(embeddings)
 ```
     
 - Learn 25 topics with a 100-dimensional hyperparameter for the variational inference
