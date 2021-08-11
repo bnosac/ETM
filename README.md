@@ -12,11 +12,13 @@ This repository contains an R package which is an implementation of ETM
 This R package is not on CRAN (yet), for now, you can install it as follows 
 
 ```
+install.packages("torch")
 install.packages("word2vec")
 install.packages("doc2vec")
 install.packages("udpipe")
 install.packages("remotes")
-remotes::install_github('bnosac/ETM')
+library(torch)
+remotes::install_github('bnosac/ETM', INSTALL_opts = '--no-multiarch')
 ```
 
 Once the package has some plotting functionalities, I'll push it on CRAN.
@@ -31,6 +33,7 @@ Build a topic model on questions answered in Belgian parliament in 2020 in Dutch
 - Standardise the text a bit
 
 ```
+library(torch)
 library(ETM)
 library(doc2vec)
 library(word2vec)

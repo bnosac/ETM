@@ -37,6 +37,7 @@
 #' }
 #' @export
 #' @examples
+#' library(torch)
 #' library(ETM)
 #' library(word2vec)
 #' library(udpipe)

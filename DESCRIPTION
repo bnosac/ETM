@@ -14,7 +14,7 @@ Description: Find topics in texts which are semantically embedded using techniqu
     The techniques are explained in detail in the paper 'Topic Modeling in Embedding Spaces' by Adji B. Dieng, Francisco J. R. Ruiz, David M. Blei (2019), available at <arXiv:1907.04907>.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Depends: R (>= 2.10), torch
-Imports: Matrix
+Depends: R (>= 2.10)
+Imports: Matrix, torch
 Suggests: udpipe, word2vec
 RoxygenNote: 7.1.1

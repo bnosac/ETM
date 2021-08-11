@@ -66,6 +66,7 @@ The model is fitted using an amortized variational inference algorithm on top of
 }
 
 \examples{
+library(torch)
 library(ETM)
 library(word2vec)
 library(udpipe)
