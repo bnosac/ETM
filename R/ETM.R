@@ -34,7 +34,6 @@
 #'  \item{clip}{number between 0 and 1 indicating to do gradient clipping - passed on to \code{\link[torch]{nn_utils_clip_grad_norm_}}}
 #'  \item{lr_anneal_factor}{divide the learning rate by this factor when the loss on the test set is monotonic for at least \code{lr_anneal_nonmono} training iterations}
 #'  \item{lr_anneal_nonmono}{number of iterations after which learning rate annealing is executed if the loss does not decreases}
-#'  \item{top_n}{integer with number of most relevant words for each topic to extract}
 #' }
 #' @export
 #' @examples
@@ -73,7 +72,7 @@
 #' plot(overview$loss_test)
 #' 
 #' ## show top words in each topic
-#' terminology <- model$topwords(top_n = 7)
+#' terminology <- predict(model, type = "terms", top_n = 7)
 #' terminology
 #' 
 #' ##
@@ -84,7 +83,7 @@
 #' model       <- ETM(k = 8, dim = 100, embeddings = 15, dropout = 0.5, vocab = colnames(dtm))
 #' optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 #' overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
-#' terminology <- model$topwords(top_n = 7)
+#' terminology <- predict(model, type = "terms", top_n = 7)
 #' terminology
 #' 
 #' 
@@ -117,7 +116,7 @@
 #' x <- as.matrix(model$parameters$rho.weight)
 #' x <- as.matrix(model$get_beta())
 #' 
-#' terminology <- model$topwords(top_n = 4)
+#' terminology <- predict(model, type = "terms", top_n = 4)
 #' terminology
 #' }
 ETM <- nn_module(
@@ -473,12 +472,13 @@ split_train_test <- function(x, train_pct = 0.7){
 #' @param newdata bag of words document term matrix in \code{dgCMatrix} format
 #' @param batch_size integer with the size of the batch
 #' @param normalize logical indicating to normalize the bag of words data
+#' @param top_n integer with number of most relevant words for each topic to extract
 #' @param ... not used
 #' @export
-predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE, ...){
+predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE, top_n = 10, ...){
   type <- match.arg(type)
   if(type == "terms"){
-    .NotYetImplemented()
+    object$topwords(top_n)
   }else{
     x          <- as_tokencounts(newdata)
     tokens     <- x$tokens

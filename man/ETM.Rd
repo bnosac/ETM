@@ -62,7 +62,6 @@ The model is fitted using an amortized variational inference algorithm on top of
  \item{clip}{number between 0 and 1 indicating to do gradient clipping - passed on to \code{\link[torch]{nn_utils_clip_grad_norm_}}}
  \item{lr_anneal_factor}{divide the learning rate by this factor when the loss on the test set is monotonic for at least \code{lr_anneal_nonmono} training iterations}
  \item{lr_anneal_nonmono}{number of iterations after which learning rate annealing is executed if the loss does not decreases}
- \item{top_n}{integer with number of most relevant words for each topic to extract}
 }
 }
 
@@ -102,7 +101,7 @@ plot(lastbatch$epoch, lastbatch$loss)
 plot(overview$loss_test)
 
 ## show top words in each topic
-terminology <- model$topwords(top_n = 7)
+terminology <- predict(model, type = "terms", top_n = 7)
 terminology
 
 ##
@@ -113,7 +112,7 @@ torch_manual_seed(4321)
 model       <- ETM(k = 8, dim = 100, embeddings = 15, dropout = 0.5, vocab = colnames(dtm))
 optimizer   <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 overview    <- model$fit(data = dtm, optimizer = optimizer, epoch = 40, batch_size = 1000)
-terminology <- model$topwords(top_n = 7)
+terminology <- predict(model, type = "terms", top_n = 7)
 terminology
 
 
@@ -146,7 +145,7 @@ x <- as.matrix(model$parameters$alphas.weight)
 x <- as.matrix(model$parameters$rho.weight)
 x <- as.matrix(model$get_beta())
 
-terminology <- model$topwords(top_n = 4)
+terminology <- predict(model, type = "terms", top_n = 4)
 terminology
 }
 }
