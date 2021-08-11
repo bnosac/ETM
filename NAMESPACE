@@ -3,5 +3,6 @@
 S3method(predict,ETM)
 export(ETM)
 import(torch)
+importFrom(Matrix,rowSums)
 importFrom(Matrix,sparseMatrix)
 importFrom(Matrix,summary)

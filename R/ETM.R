@@ -381,6 +381,8 @@ ETM <- nn_module(
     ppl_dc
   },
   fit = function(data, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10){
+    stopifnot(inherits(data, "sparseMatrix"))
+    data  <- data[Matrix::rowSums(data) > 0, ]
     idx   <- split_train_test(data, train_pct = 0.7)
     test1 <- as_tokencounts(data[idx$test1, ])
     test2 <- as_tokencounts(data[idx$test2, ])
@@ -481,6 +483,9 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
   if(type == "terms"){
     object$topwords(top_n)
   }else{
+    if(any(Matrix::rowSums(newdata) <= 0)){
+      stop("All rows of newdata should have at least 1 count")
+    }
     x          <- as_tokencounts(newdata)
     tokens     <- x$tokens
     counts     <- x$counts
