@@ -10,6 +10,7 @@
   type = c("topics", "terms"),
   batch_size = nrow(newdata),
   normalize = TRUE,
+  top_n = 10,
   ...
 )
 }
@@ -23,6 +24,8 @@
 \item{batch_size}{integer with the size of the batch}
 
 \item{normalize}{logical indicating to normalize the bag of words data}
+
+\item{top_n}{integer with number of most relevant words for each topic to extract}
 
 \item{...}{not used}
 }
