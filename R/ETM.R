@@ -271,6 +271,7 @@ ETM <- nn_module(
         gamma <- as.numeric(gamma) 
         gamma <- data.frame(term = self$vocab, gamma = gamma, stringsAsFactors = FALSE)
         gamma <- gamma[order(gamma$gamma, decreasing = TRUE), ]
+        gamma$rank <- seq_len(nrow(gamma))
         out[[k]] <- head(gamma, n = top_n)
       }
     })
