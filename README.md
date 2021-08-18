@@ -7,6 +7,8 @@ This repository contains an R package which is an implementation of ETM
     - The model is fitted using an amortized variational inference algorithm on top of libtorch (https://torch.mlverse.org)
 - The techniques are explained in detail in the paper: "Topic Modelling in Embedding Spaces" by Adji B. Dieng, Francisco J. R. Ruiz and David M. Blei, available at https://arxiv.org/pdf/1907.04907.pdf 
 
+![](tools/example-visualisation.png)
+
 ### Installation
 
 This R package is not on CRAN (yet), for now, you can install it as follows 
@@ -275,7 +277,9 @@ scores
 
 #### f. Optionally - visualise the model in 2D
 
-![](tools/example-visualisation.png)
+Example plot shown above was created using the following code
+
+![](tools/example-visualisation-basic.png)
 
 - Put embeddings of words and cluster centers in 2D using UMAP
 
