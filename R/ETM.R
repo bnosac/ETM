@@ -95,7 +95,7 @@
 #' ##
 #' ## Another example using fit_original
 #' ##
-#' data(ng20, package = "ETM")
+#' data(ng20, package = "topicmodels.etm")
 #' vocab  <- ng20$vocab
 #' tokens <- ng20$bow_tr$tokens
 #' counts <- ng20$bow_tr$counts
