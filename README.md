@@ -303,12 +303,14 @@ df$cluster   <- factor(df$cluster)
 
 library(ggplot2)
 library(ggrepel)
-gg <- ggplot(subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 13, 15, 19, 17)), 
+gg <- ggplot(subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 15, 19, 17)), 
     aes(x = x, y = y, label = term, color = cluster, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
     geom_text_repel(show.legend = FALSE) + 
     theme_void() + 
     labs(title = "ETM clusters", subtitle = "embedded in 2D using UMAP")
 gg + geom_point(show.legend = FALSE)
+
+## encircle if clusters are non-overlapping
 library(ggalt)
 gg + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
 ```
