@@ -316,19 +316,16 @@ textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D usin
 library(ggplot2)
 library(ggrepel)
 x$cluster   <- factor(x$cluster)
-gg <- ggplot(x, 
+plt <- ggplot(x, 
     aes(x = x, y = y, label = term, color = cluster, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
     geom_text_repel(show.legend = FALSE) + 
     theme_void() + 
     labs(title = "ETM clusters", subtitle = "embedded in 2D using UMAP")
-gg + geom_point(show.legend = FALSE)
+plt + geom_point(show.legend = FALSE)
 
 ## encircle if clusters are non-overlapping can provide nice visualisations
 library(ggalt)
-gg + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
-
-
-
+plt + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
 ```
 
 > More examples are provided in the help of the ETM function see `?ETM`
