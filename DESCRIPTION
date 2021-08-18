@@ -1,4 +1,4 @@
-Package: ETM
+Package: topicmodels.etm
 Type: Package
 Title: Topic Modelling in Embedding Spaces
 Version: 0.1.0

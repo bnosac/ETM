@@ -1,6 +1,6 @@
 # ETM - R package for Topic Modelling in Embedding Spaces
 
-This repository contains an R package which is an implementation of ETM
+This repository contains an R package called `topicmodels.etm` which is an implementation of ETM
 
 - ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec)
     - It models each word with a categorical distribution whose natural parameter is the inner product between a word embedding and an embedding of its assigned topic
@@ -36,7 +36,7 @@ Build a topic model on questions answered in Belgian parliament in 2020 in Dutch
 
 ```
 library(torch)
-library(ETM)
+library(topicmodels.etm)
 library(doc2vec)
 library(word2vec)
 data(be_parliament_2020, package = "doc2vec")

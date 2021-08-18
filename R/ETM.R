@@ -38,7 +38,7 @@
 #' @export
 #' @examples
 #' library(torch)
-#' library(ETM)
+#' library(topicmodels.etm)
 #' library(word2vec)
 #' library(udpipe)
 #' data(brussels_reviews_anno, package = "udpipe")
@@ -61,6 +61,8 @@
 #' dtm <- dtm[dtm_rowsums(dtm) > 0, ]
 #' 
 #' ## create and fit an embedding topic model - 8 topics, theta 100-dimensional
+#' if (torch::torch_is_installed()) {
+#' 
 #' set.seed(4321)
 #' torch_manual_seed(4321)
 #' model       <- ETM(k = 8, dim = 100, embeddings = embeddings, dropout = 0.5)
@@ -119,6 +121,8 @@
 #' 
 #' terminology <- predict(model, type = "terms", top_n = 4)
 #' terminology
+#' }
+#' 
 #' }
 ETM <- nn_module(
   classname = "ETM",
