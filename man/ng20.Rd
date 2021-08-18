@@ -5,7 +5,7 @@
 \alias{ng20}
 \title{Bag of words sample of the 20 newsgroups dataset}
 \description{
-Data available at \url{https://github.com/adjidieng/ETM/tree/master/data/20ng}
+Data available at \url{https://github.com/bnosac-dev/ETM/tree/master/data/20ng}
 }
 \examples{
 data(ng20)

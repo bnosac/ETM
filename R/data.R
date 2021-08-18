@@ -1,5 +1,5 @@
 #' @title Bag of words sample of the 20 newsgroups dataset
-#' @description Data available at \url{https://github.com/adjidieng/ETM/tree/master/data/20ng}
+#' @description Data available at \url{https://github.com/bnosac-dev/ETM/tree/master/data/20ng}
 #' @name ng20
 #' @docType data
 #' @examples
