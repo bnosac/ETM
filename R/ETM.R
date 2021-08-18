@@ -21,7 +21,6 @@
 #' }
 #' @section Methods:
 #' \describe{
-#'   \item{\code{get_beta()}}{Softmax-transformed inner product of word embedding and topic embeddings}
 #'   \item{\code{fit(data, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10)}}{Fit the model on a document term matrix by splitting the data in 70/30 training/test set and updating the model weights.}
 #' }
 #' @section Arguments:
@@ -115,9 +114,9 @@
 #' test <- subset(out$loss, out$loss$batch_is_last == TRUE)
 #' plot(test$epoch, test$loss)
 #' 
-#' x <- as.matrix(model$parameters$alphas.weight)
-#' x <- as.matrix(model$parameters$rho.weight)
-#' x <- as.matrix(model$get_beta())
+#' topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
+#' word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
+#' topic.terminology <- as.matrix(model, type = "gamma")
 #' 
 #' terminology <- predict(model, type = "terms", top_n = 4)
 #' terminology
@@ -529,7 +528,8 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 
 
 #' @title Get matrices out of the \code{ETM} object
-#' @description Convenience functions to extract cluster embeddings and word emittance gamma 
+#' @description Convenience functions to extract embeddings of the cluster centers, the word embeddings
+#' and the word emittance by each topic called gamma which is technically the softmax-transformed inner product of word embedding and topic embeddings
 #' @param x an object of class \code{ETM}
 #' @param type character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.
 #' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
