@@ -522,3 +522,38 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
     preds
   }
 }
+
+
+#' @title Get matrices out of the \code{ETM} object
+#' @description Convenience functions to extract cluster embeddings and word emittance gamma 
+#' @param object an object of class \code{ETM}
+#' @param type character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.
+#' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
+#' @param ... not used
+#' @export
+as.matrix.ETM <- function(x, type = c("embedding", "gamma"), which = c("topics", "words"), ...){
+  type  <- match.arg(type)
+  which <- match.arg(which)
+  self <- x
+  self$eval()
+  if(type == "embedding"){
+    if(which == "topics"){
+      with_no_grad({
+        out <- as.matrix(self$parameters$alphas.weight)  
+      })
+    }else if(which == "words"){
+      with_no_grad({
+        out <- as.matrix(self$parameters$rho.weight)  
+        rownames(out) <- self$vocab
+      })
+    }
+  }else if(type == "gamma"){
+    with_no_grad({
+      gammas <- self$get_beta()
+      gammas <- as.matrix(gammas)
+      colnames(gammas) <- self$vocab
+    })
+    out <- t(gammas)
+  }
+  out
+}
