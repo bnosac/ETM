@@ -88,7 +88,7 @@ dim(dtm)
 dim(embeddings)
 ```
     
-- Learn 25 topics with a 100-dimensional hyperparameter for the variational inference
+- Learn 20 topics with a 100-dimensional hyperparameter for the variational inference
 
 ```
 torch_manual_seed(4321)
@@ -285,7 +285,7 @@ Example plot shown above was created using the following code
 
 ```
 library(uwot)
-viz     <- umap(embeddings, n_components = 2, metric = "cosine", min_dist = 0.001, n_neighbors = 15, fast_sgd = TRUE, n_threads = 2, ret_model = TRUE, verbose = TRUE)
+viz     <- umap(embeddings, n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, n_threads = 2, ret_model = TRUE, verbose = TRUE)
 centers <- as.matrix(model$parameters$alphas.weight)
 centers <- umap_transform(centers, viz)
 words   <- viz$embedding
@@ -303,20 +303,32 @@ df           <- list(words   = merge(terminology, data.frame(x = words[, 1], y =
                                           cluster = seq_len(nrow(centers))))
 df           <- rbindlist(df, use.names = TRUE, fill = TRUE, idcol = "type")
 df           <- df[, weight := ifelse(is.na(gamma), 0.8, gamma / max(gamma, na.rm = TRUE)), by = list(cluster)]
-df$cluster   <- factor(df$cluster)
 
+## Either use the textplot package version >= 0.2.0 (https://github.com/bnosac/textplot) 
+library(textplot)
+library(ggrepel)
+library(ggalt)
+x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 15, 19, 17))
+textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = FALSE, points = FALSE)
+textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = TRUE, points = TRUE)
+
+## Or if you like writing down the full ggplot2 code 
 library(ggplot2)
 library(ggrepel)
-gg <- ggplot(subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 15, 19, 17)), 
+x$cluster   <- factor(x$cluster)
+gg <- ggplot(x, 
     aes(x = x, y = y, label = term, color = cluster, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
     geom_text_repel(show.legend = FALSE) + 
     theme_void() + 
     labs(title = "ETM clusters", subtitle = "embedded in 2D using UMAP")
 gg + geom_point(show.legend = FALSE)
 
-## encircle if clusters are non-overlapping
+## encircle if clusters are non-overlapping can provide nice visualisations
 library(ggalt)
 gg + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
+
+
+
 ```
 
 > More examples are provided in the help of the ETM function see `?ETM`
