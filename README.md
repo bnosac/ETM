@@ -90,7 +90,7 @@ dim(embeddings)
 
 ```
 torch_manual_seed(4321)
-model          <- ETM(k = 25, dim = 100, embeddings = embeddings, dropout = 0.5)
+model          <- ETM(k = 20, dim = 100, embeddings = embeddings, dropout = 0.5)
 optimizer      <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 loss_evolution <- model$fit(data = dtm, optimizer = optimizer, epoch = 20, batch_size = 1000)
 plot(loss_evolution$loss_test, xlab = "Epoch", ylab = "Loss", main = "Loss evolution on test set")
@@ -105,204 +105,164 @@ plot(loss_evolution$loss_test, xlab = "Epoch", ylab = "Loss", main = "Loss evolu
 terminology  <- predict(model, type = "terms", top_n = 5)
 terminology
 [[1]]
-          term       gamma
-2221  agressie 0.017512944
-1567    wapens 0.011357320
-1956    beslag 0.008855813
-2002      unia 0.007408552
-2388 foltering 0.007176779
+              term      gamma
+3891 zelfstandigen 0.05245856
+2543      opdeling 0.02827548
+5469  werkloosheid 0.02366866
+3611          ocmw 0.01772762
+4957  zelfstandige 0.01139760
 
 [[2]]
-           term      gamma
-1234   gebouwen 0.01591281
-1244 voertuigen 0.01182650
-1725   infrabel 0.01099777
-2048      bpost 0.01027404
-1984 bestuurder 0.00681403
+              term       gamma
+3891 zelfstandigen 0.032309771
+5469  werkloosheid 0.021119611
+4957  zelfstandige 0.010217560
+3611          ocmw 0.009712025
+2543      opdeling 0.008961252
 
 [[3]]
               term      gamma
-1385 gedetineerden 0.02460375
-1906 gerepatrieerd 0.01325942
-1347   landgenoten 0.01323096
-1587    militairen 0.01186746
-2047      hongkong 0.01039845
+2537 gedetineerden 0.02914266
+3827 nationaliteit 0.02540042
+3079    gevangenis 0.02136421
+5311 gevangenissen 0.01215335
+3515  asielzoekers 0.01204639
 
 [[4]]
-       term      gamma
-1297    app 0.08897609
-2101   favv 0.02519019
-1968    gba 0.01936190
-1837   apps 0.01890722
-2176 tiktok 0.01491214
+             term      gamma
+3435          btw 0.02814350
+5536    kostprijs 0.02012880
+3508          pod 0.01218093
+2762          vzw 0.01088356
+2996 vennootschap 0.01015108
 
 [[5]]
-         term      gamma
-1725 infrabel 0.04996496
-1918   dieren 0.04363983
-1414 bushmeat 0.02696244
-2410    vlees 0.01729637
-2048    bpost 0.01599066
+               term       gamma
+3372        verbaal 0.011172118
+3264    politiezone 0.008422602
+3546 arrondissement 0.007855867
+3052      inbreuken 0.007204257
+2543       opdeling 0.007149355
 
 [[6]]
-               term       gamma
-1193 geneesmiddelen 0.008525930
-1701          tests 0.005812821
-1385  gedetineerden 0.005222120
-1637 woonzorgcentra 0.004903472
-2026     aandoening 0.004264550
+                  term      gamma
+3296        instelling 0.04442037
+3540 wetenschappelijke 0.03434755
+2652             china 0.02702594
+3043    volksrepubliek 0.01844959
+3893          hongkong 0.01792639
 
 [[7]]
-                    term      gamma
-1491            facturen 0.01670218
-1833                 btw 0.01503910
-1989 zekerheidsbijdragen 0.01353257
-1946                 rsz 0.01305994
-1870                 pod 0.01061896
+               term       gamma
+2133       databank 0.003111386
+3079     gevangenis 0.002650804
+3255            dvz 0.002098217
+3614         centra 0.001884672
+2142 geneesmiddelen 0.001791468
 
 [[8]]
-               term       gamma
-1193 geneesmiddelen 0.004858544
-2101           favv 0.003693702
-1701          tests 0.003470343
-1965             5g 0.003284918
-1442           bipt 0.003238067
+         term      gamma
+2547 defensie 0.03706463
+3785  kabinet 0.01323747
+4054  griekse 0.01317877
+3750   turkse 0.01238277
+3076    leger 0.00964661
 
 [[9]]
-                    term       gamma
-1495                 vzw 0.009609610
-2748   beroepsvereniging 0.006409373
-1833                 btw 0.005791733
-1870                 pod 0.005371029
-1558 beroepsverenigingen 0.004683901
+            term       gamma
+3649        nmbs 0.005472604
+3704      beslag 0.004442090
+2457   nucleaire 0.003911803
+2461 mondmaskers 0.003712016
+3533   materiaal 0.003513884
 
 [[10]]
-              term       gamma
-1865     bezoekers 0.008799853
-1587    militairen 0.007766290
-1922     beperking 0.006185776
-1385 gedetineerden 0.006049119
-1906 gerepatrieerd 0.005425004
+               term       gamma
+4586   politiezones 0.017413139
+2248     voertuigen 0.012508971
+3649           nmbs 0.008157282
+2769 politieagenten 0.007591151
+3863        beelden 0.006747020
 
 [[11]]
-                    term       gamma
-2095 belastingplichtigen 0.009138852
-2179             mandaat 0.007034023
-1946                 rsz 0.006237295
-1833                 btw 0.006221564
-1984          bestuurder 0.005178992
+              term       gamma
+3827 nationaliteit 0.009992087
+4912        duitse 0.008966853
+3484       turkije 0.008940011
+2652         china 0.008723009
+4008  overeenkomst 0.007879931
 
 [[12]]
-                   term       gamma
-1385      gedetineerden 0.006461640
-2221           agressie 0.006268502
-1865          bezoekers 0.004667756
-1919     cyberaanvallen 0.004332834
-1666 cybercriminaliteit 0.004241356
+           term       gamma
+3651 opsplitsen 0.008752496
+4247   kinderen 0.006497230
+2606  sciensano 0.006430181
+3170      tests 0.006420473
+3587  studenten 0.006165542
 
 [[13]]
-                    term       gamma
-1833                 btw 0.006126372
-1495                 vzw 0.005881680
-2095 belastingplichtigen 0.004853509
-1946                 rsz 0.003556216
-1289     gepensioneerden 0.003081724
+               term       gamma
+3052      inbreuken 0.007657704
+2447          drugs 0.006734609
+2195      meldingen 0.005259825
+3372        verbaal 0.005117311
+3625 cyberaanvallen 0.004269334
 
 [[14]]
-                term       gamma
-1603        telewerk 0.011072752
-1999         kabinet 0.007473562
-2048           bpost 0.007210678
-1833             btw 0.006780275
-1289 gepensioneerden 0.006000138
+         term      gamma
+2234 gebouwen 0.06128503
+3531 digitale 0.03030998
+3895    bpost 0.02974019
+4105    regie 0.02608073
+3224 infrabel 0.01758554
 
 [[15]]
-                    term       gamma
-1833                 btw 0.010264894
-2483  overbruggingsrecht 0.007632098
-1931 tweedelijnsbijstand 0.007382195
-2095 belastingplichtigen 0.005279044
-1289     gepensioneerden 0.004825821
+         term      gamma
+3649     nmbs 0.08117295
+3826  station 0.03944306
+3911    trein 0.03548101
+4965  treinen 0.02843846
+3117 stations 0.02732874
 
 [[16]]
-         term      gamma
-1692    spits 0.02207421
-1999  kabinet 0.01708163
-1603 telewerk 0.01514265
-1378 turnhout 0.01506173
-2385  daluren 0.01276572
+                term      gamma
+3649            nmbs 0.06778506
+3240 personeelsleden 0.03363639
+2972        telewerk 0.01857295
+4965         treinen 0.01807373
+3785         kabinet 0.01702784
 
 [[17]]
-          term      gamma
-1999   kabinet 0.10355280
-1603  telewerk 0.05764178
-1870       pod 0.02747864
-1834      reis 0.02058239
-1865 bezoekers 0.01466277
+                 term       gamma
+2371              app 0.009092372
+3265          stoffen 0.006641808
+2461      mondmaskers 0.006462210
+3025 persoonsgegevens 0.005374488
+2319         websites 0.005372964
 
 [[18]]
-                  term       gamma
-1495               vzw 0.007413817
-2748 beroepsvereniging 0.003792811
-2332              jobs 0.003681063
-1357              nace 0.003485834
-1623        artistieke 0.003441319
+         term      gamma
+5296 aangifte 0.01940070
+3435      btw 0.01360575
+2762      vzw 0.01307520
+2756 facturen 0.01233578
+2658 rekenhof 0.01196285
 
 [[19]]
-                 term       gamma
-1193   geneesmiddelen 0.006785220
-1800  nationaliteiten 0.005246738
-1741              dvz 0.004748864
-1196             visa 0.004452683
-2018 betalingstermijn 0.003933043
+               term       gamma
+3631      beperking 0.017481016
+3069       handicap 0.010403863
+3905 tewerkstelling 0.009714387
+3785        kabinet 0.006984415
+2600      ombudsman 0.006074827
 
 [[20]]
-           term      gamma
-1234   gebouwen 0.10468882
-1725   infrabel 0.09569670
-1244 voertuigen 0.05763330
-2158      regie 0.04608878
-1851       site 0.03914404
-
-[[21]]
-                  term       gamma
-1833               btw 0.018040504
-1454 personenbelasting 0.007000353
-2048             bpost 0.006666712
-1603          telewerk 0.006580409
-1946               rsz 0.005649193
-
-[[22]]
-              term       gamma
-1587    militairen 0.019814594
-2150 tewerkgesteld 0.014522048
-1385 gedetineerden 0.010257471
-1999       kabinet 0.009206563
-1865     bezoekers 0.007076799
-
-[[23]]
-               term       gamma
-1922      beperking 0.007870421
-1893     chronische 0.007610516
-2026     aandoening 0.005695772
-1919 cyberaanvallen 0.005679780
-1193 geneesmiddelen 0.003775434
-
-[[24]]
-               term      gamma
-1193 geneesmiddelen 0.02275880
-1999        kabinet 0.01833401
-2150  tewerkgesteld 0.01487170
-2058            kce 0.01459871
-1603       telewerk 0.01203416
-
-[[25]]
-                   term       gamma
-1193     geneesmiddelen 0.007481673
-1666 cybercriminaliteit 0.004415261
-2048              bpost 0.003457238
-1919     cyberaanvallen 0.003405995
-1956             beslag 0.003151005
+          term      gamma
+3228    geweld 0.05881281
+4178   vrouwen 0.05113553
+4247  kinderen 0.04818219
+2814  jongeren 0.01803746
+2195 meldingen 0.01548613
 ```
 
 #### e. Predict alongside the model
@@ -311,6 +271,46 @@ terminology
 newdata <- head(dtm, n = 5)
 scores  <- predict(model, newdata, type = "topics")
 scores
+```
+
+#### f. Optionally - visualise the model in 2D
+
+![](tools/example-visualisation.png)
+
+- Put embeddings of words and cluster centers in 2D using UMAP
+
+```
+library(uwot)
+viz     <- umap(embeddings, n_components = 2, metric = "cosine", min_dist = 0.001, n_neighbors = 15, fast_sgd = TRUE, n_threads = 2, ret_model = TRUE, verbose = TRUE)
+centers <- as.matrix(model$parameters$alphas.weight)
+centers <- umap_transform(centers, viz)
+words   <- viz$embedding
+```
+
+- Plot words in 2D, color by cluster and add cluster centers in 2D
+
+```
+library(data.table)
+terminology  <- predict(model, type = "terms", top_n = 7)
+terminology  <- rbindlist(terminology, idcol = "cluster")
+df           <- list(words   = merge(terminology, data.frame(x = words[, 1], y = words[, 2], term = rownames(embeddings)), by = "term"), 
+                     centers = data.frame(x = centers[, 1], y = centers[, 2], 
+                                          term = paste("Cluster-", seq_len(nrow(centers)), sep = ""), 
+                                          cluster = seq_len(nrow(centers))))
+df           <- rbindlist(df, use.names = TRUE, fill = TRUE, idcol = "type")
+df           <- df[, weight := ifelse(is.na(gamma), 0.8, gamma / max(gamma, na.rm = TRUE)), by = list(cluster)]
+df$cluster   <- factor(df$cluster)
+
+library(ggplot2)
+library(ggrepel)
+gg <- ggplot(subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 13, 15, 19, 17)), 
+    aes(x = x, y = y, label = term, color = cluster, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
+    geom_text_repel(show.legend = FALSE) + 
+    theme_void() + 
+    labs(title = "ETM clusters", subtitle = "embedded in 2D using UMAP")
+gg + geom_point(show.legend = FALSE)
+library(ggalt)
+gg + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
 ```
 
 > More examples are provided in the help of the ETM function see `?ETM`
