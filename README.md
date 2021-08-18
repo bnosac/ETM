@@ -92,7 +92,7 @@ dim(embeddings)
 
 ```
 torch_manual_seed(4321)
-model          <- ETM(k = 20, dim = 100, embeddings = embeddings, dropout = 0.5)
+model          <- ETM(k = 20, dim = 100, embeddings = embeddings)
 optimizer      <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
 loss_evolution <- model$fit(data = dtm, optimizer = optimizer, epoch = 20, batch_size = 1000)
 plot(loss_evolution$loss_test, xlab = "Epoch", ylab = "Loss", main = "Loss evolution on test set")
@@ -285,7 +285,8 @@ Example plot shown above was created using the following code
 
 ```
 library(uwot)
-viz     <- umap(embeddings, n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, n_threads = 2, ret_model = TRUE, verbose = TRUE)
+viz     <- umap(embeddings, n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, 
+                n_threads = 2, ret_model = TRUE, verbose = TRUE)
 centers <- as.matrix(model, type = "embedding", which = "topics")
 centers <- umap_transform(centers, viz)
 words   <- viz$embedding
