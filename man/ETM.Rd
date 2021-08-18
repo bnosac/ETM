@@ -46,7 +46,6 @@ The model is fitted using an amortized variational inference algorithm on top of
 \section{Methods}{
 
 \describe{
-  \item{\code{get_beta()}}{Softmax-transformed inner product of word embedding and topic embeddings}
   \item{\code{fit(data, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10)}}{Fit the model on a document term matrix by splitting the data in 70/30 training/test set and updating the model weights.}
 }
 }
@@ -144,9 +143,9 @@ out <- model$fit_original(data = traindata, test1 = test1, test2 = test2, epoch 
 test <- subset(out$loss, out$loss$batch_is_last == TRUE)
 plot(test$epoch, test$loss)
 
-x <- as.matrix(model$parameters$alphas.weight)
-x <- as.matrix(model$parameters$rho.weight)
-x <- as.matrix(model$get_beta())
+topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
+word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
+topic.terminology <- as.matrix(model, type = "gamma")
 
 terminology <- predict(model, type = "terms", top_n = 4)
 terminology

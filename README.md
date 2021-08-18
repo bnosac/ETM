@@ -92,10 +92,10 @@ dim(embeddings)
 
 ```
 torch_manual_seed(4321)
-model          <- ETM(k = 20, dim = 100, embeddings = embeddings)
-optimizer      <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
-loss_evolution <- model$fit(data = dtm, optimizer = optimizer, epoch = 20, batch_size = 1000)
-plot(loss_evolution$loss_test, xlab = "Epoch", ylab = "Loss", main = "Loss evolution on test set")
+model     <- ETM(k = 20, dim = 100, embeddings = embeddings)
+optimizer <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
+loss      <- model$fit(data = dtm, optimizer = optimizer, epoch = 20, batch_size = 1000)
+plot(model, type = "loss")
 ```
 
 ![](tools/loss-evolution.png)
@@ -275,7 +275,14 @@ scores  <- predict(model, newdata, type = "topics")
 scores
 ```
 
-#### f. Optionally - visualise the model in 2D
+#### f. Save / Load model
+
+```
+torch_save(model, "my_etm.ckpt")
+model <- torch_load("my_etm.ckpt")
+```
+
+#### g. Optionally - visualise the model in 2D
 
 Example plot shown above was created using the following code
 
@@ -285,11 +292,13 @@ Example plot shown above was created using the following code
 
 ```
 library(uwot)
-viz     <- umap(embeddings, n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, 
-                n_threads = 2, ret_model = TRUE, verbose = TRUE)
-centers <- as.matrix(model, type = "embedding", which = "topics")
-centers <- umap_transform(centers, viz)
-words   <- viz$embedding
+centers    <- as.matrix(model, type = "embedding", which = "topics")
+embeddings <- as.matrix(model, type = "embedding", which = "words")
+manifold   <- umap(embeddings, 
+                   n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, 
+                   n_threads = 2, ret_model = TRUE, verbose = TRUE)
+centers    <- umap_transform(X = centers, model = manifold)
+words      <- manifold$embedding
 ```
 
 - Plot words in 2D, color by cluster and add cluster centers in 2D
@@ -309,7 +318,7 @@ df           <- df[, weight := ifelse(is.na(gamma), 0.8, gamma / max(gamma, na.r
 library(textplot)
 library(ggrepel)
 library(ggalt)
-x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 10, 15, 19, 17))
+x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4))
 textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = FALSE, points = FALSE)
 textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = TRUE, points = TRUE)
 
@@ -330,7 +339,7 @@ plt + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.lege
 ```
 
 > More examples are provided in the help of the ETM function see `?ETM`
-
+> Don't forget to set seeds to have reproducible behaviour
 
 ## Support in text mining
 

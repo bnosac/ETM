@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETM.R
 \name{as.matrix.ETM}
 \alias{as.matrix.ETM}
-\title{Get matrices out of the \code{ETM} object}
+\title{Get matrices out of the ETM object}
 \usage{
 \method{as.matrix}{ETM}(x, type = c("embedding", "gamma"), which = c("topics", "words"), ...)
 }
@@ -16,5 +16,6 @@
 \item{...}{not used}
 }
 \description{
-Convenience functions to extract cluster embeddings and word emittance gamma
+Convenience functions to extract embeddings of the cluster centers, the word embeddings
+and the word emittance by each topic called gamma which is technically the softmax-transformed inner product of word embedding and topic embeddings
 }

@@ -154,6 +154,7 @@ ETM <- nn_module(
     enc_drop           <- dropout
     
     vocab_size         <- length(vocab)
+    self$loss_fit      <- NULL
     self$vocab         <- vocab
     self$num_topics    <- num_topics
     self$vocab_size    <- vocab_size
@@ -391,9 +392,11 @@ ETM <- nn_module(
     test1 <- as_tokencounts(data[idx$test1, ])
     test2 <- as_tokencounts(data[idx$test2, ])
     data  <- as_tokencounts(data[idx$train, ])
-    self$fit_original(data = data, test1 = test1, test2 = test2, optimizer = optimizer, epoch = epoch, 
-                      batch_size = batch_size, normalize = normalize, clip = clip, 
-                      lr_anneal_factor = lr_anneal_factor, lr_anneal_nonmono = lr_anneal_nonmono)
+    loss_evolution <- self$fit_original(data = data, test1 = test1, test2 = test2, optimizer = optimizer, epoch = epoch, 
+                                        batch_size = batch_size, normalize = normalize, clip = clip, 
+                                        lr_anneal_factor = lr_anneal_factor, lr_anneal_nonmono = lr_anneal_nonmono)
+    self$loss_fit <- loss_evolution
+    invisible(loss_evolution)
   },
   fit_original = function(data, test1, test2, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10){
     epochs       <- epoch
@@ -527,7 +530,7 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 }
 
 
-#' @title Get matrices out of the \code{ETM} object
+#' @title Get matrices out of the ETM object
 #' @description Convenience functions to extract embeddings of the cluster centers, the word embeddings
 #' and the word emittance by each topic called gamma which is technically the softmax-transformed inner product of word embedding and topic embeddings
 #' @param x an object of class \code{ETM}
@@ -560,4 +563,32 @@ as.matrix.ETM <- function(x, type = c("embedding", "gamma"), which = c("topics",
     out <- t(gammas)
   }
   out
+}
+
+#' @title Plot functionality for an ETM object 
+#' @description Convenience function allowing to plot the evolution of the loss
+#' @param x an object of class \code{ETM}
+#' @param type character string with the type of plot, either 'loss' or 'topics'
+#' @param ... not used
+#' @export
+plot.ETM <- function(x, type = c("loss", "topics"), ...){
+  type <- match.arg(type)
+  if(type == "loss"){
+    loss_evolution <- x$loss_fit
+    if(is.null(loss_evolution)){
+      stop("You haven't trained the model yet")
+    }
+    oldpar <- par(no.readonly = TRUE)
+    on.exit({
+      par(oldpar) 
+    })
+    
+    combined           <- loss_evolution$loss[loss_evolution$loss$batch_is_last == TRUE, ]
+    combined$loss_test <- loss_evolution$loss_test
+    par(mfrow = c(1, 2))
+    plot(combined$epoch, combined$loss, xlab = "Epoch", ylab = "loss", main = "Avg batch loss evolution\non 70% training set", col = "steelblue", type = "b", pch = 20, lty = 2)
+    plot(combined$epoch, combined$loss_test, xlab = "Epoch", ylab = "exp(loss)", main = "Avg batch loss evolution\non 30% test set", col = "purple", type = "b", pch = 20, lty = 2)
+  }else{
+    .NotYetImplemented()
+  }
 }
