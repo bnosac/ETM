@@ -49,7 +49,6 @@ x$text <- txt_clean_word2vec(x$text)
 #### b. Build a word2vec model to get word embeddings and inspect it a bit
 
 ```
-set.seed(1234)
 w2v        <- word2vec(x = x$text, dim = 25, type = "skip-gram", iter = 10, min_count = 5, threads = 2)
 embeddings <- as.matrix(w2v)
 predict(w2v, newdata = c("migranten", "belastingen"), type = "nearest", top_n = 4)
@@ -91,6 +90,7 @@ dim(embeddings)
 - Learn 20 topics with a 100-dimensional hyperparameter for the variational inference
 
 ```
+set.seed(1234)
 torch_manual_seed(4321)
 model     <- ETM(k = 20, dim = 100, embeddings = embeddings)
 optimizer <- optim_adam(params = model$parameters, lr = 0.005, weight_decay = 0.0000012)
