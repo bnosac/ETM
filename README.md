@@ -301,28 +301,33 @@ centers    <- umap_transform(X = centers, model = manifold)
 words      <- manifold$embedding
 ```
 
-- Plot words in 2D, color by cluster and add cluster centers in 2D
+- Plot words in 2D, color by cluster and add cluster centers in 2D 
+    - This uses R package textplot >= 0.2.0 (https://github.com/bnosac/textplot) which was put on CRAN on 2021-08-18
 
 ```
 library(data.table)
 terminology  <- predict(model, type = "terms", top_n = 7)
 terminology  <- rbindlist(terminology, idcol = "cluster")
-df           <- list(words   = merge(terminology, data.frame(x = words[, 1], y = words[, 2], term = rownames(embeddings)), by = "term"), 
+df           <- list(words   = merge(x = terminology, 
+                                     y = data.frame(x = words[, 1], y = words[, 2], term = rownames(embeddings)), 
+                                     by = "term"), 
                      centers = data.frame(x = centers[, 1], y = centers[, 2], 
                                           term = paste("Cluster-", seq_len(nrow(centers)), sep = ""), 
                                           cluster = seq_len(nrow(centers))))
 df           <- rbindlist(df, use.names = TRUE, fill = TRUE, idcol = "type")
 df           <- df[, weight := ifelse(is.na(gamma), 0.8, gamma / max(gamma, na.rm = TRUE)), by = list(cluster)]
 
-## Either use the textplot package version >= 0.2.0 (https://github.com/bnosac/textplot) 
 library(textplot)
 library(ggrepel)
 library(ggalt)
-x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4))
+x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 8))
 textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = FALSE, points = FALSE)
 textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = TRUE, points = TRUE)
+```
 
-## Or if you like writing down the full ggplot2 code 
+-  Or if you like writing down the full ggplot2 code 
+
+```
 library(ggplot2)
 library(ggrepel)
 x$cluster   <- factor(x$cluster)
