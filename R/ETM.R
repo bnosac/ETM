@@ -526,7 +526,7 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 
 #' @title Get matrices out of the \code{ETM} object
 #' @description Convenience functions to extract cluster embeddings and word emittance gamma 
-#' @param object an object of class \code{ETM}
+#' @param x an object of class \code{ETM}
 #' @param type character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.
 #' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
 #' @param ... not used

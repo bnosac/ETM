@@ -286,7 +286,7 @@ Example plot shown above was created using the following code
 ```
 library(uwot)
 viz     <- umap(embeddings, n_components = 2, metric = "cosine", n_neighbors = 15, fast_sgd = TRUE, n_threads = 2, ret_model = TRUE, verbose = TRUE)
-centers <- as.matrix(model$parameters$alphas.weight)
+centers <- as.matrix(model, type = "embedding", which = "topics")
 centers <- umap_transform(centers, viz)
 words   <- viz$embedding
 ```

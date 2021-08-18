@@ -7,13 +7,13 @@
 \method{as.matrix}{ETM}(x, type = c("embedding", "gamma"), which = c("topics", "words"), ...)
 }
 \arguments{
+\item{x}{an object of class \code{ETM}}
+
 \item{type}{character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.}
 
 \item{which}{if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.}
 
 \item{...}{not used}
-
-\item{object}{an object of class \code{ETM}}
 }
 \description{
 Convenience functions to extract cluster embeddings and word emittance gamma
