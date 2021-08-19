@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETM.R
 \name{predict.ETM}
 \alias{predict.ETM}
-\title{Get predictions from an embedding topic model}
+\title{Predict to which ETM topic a text belongs}
 \usage{
 \method{predict}{ETM}(
   object,

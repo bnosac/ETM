@@ -16,6 +16,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 SystemRequirements: LibTorch (https://pytorch.org/)
 Depends: R (>= 2.10)
-Imports: graphics, Matrix, torch
-Suggests: udpipe, word2vec
+Imports: graphics, stats, Matrix, torch
+Suggests: udpipe, word2vec, uwot
 RoxygenNote: 7.1.1

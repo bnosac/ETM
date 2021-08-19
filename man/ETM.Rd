@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETM.R
 \name{ETM}
 \alias{ETM}
-\title{Topic Modelling in Embedding Spaces}
+\title{Topic Modelling in Semantic Embedding Spaces}
 \usage{
 ETM(
   k = 20,
@@ -39,9 +39,11 @@ an object of class ETM which is a torch \code{nn_module} containing o.a.
 }
 \description{
 ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). \cr
-It models each word with a categorical distribution whose natural parameter is the inner product between
-a word embedding and an embedding of its assigned topic.\cr
-The model is fitted using an amortized variational inference algorithm on top of libtorch.
+\itemize{
+\item{It models each word with a categorical distribution whose natural parameter is the inner product between
+a word embedding and an embedding of its assigned topic.}
+\item{The model is fitted using an amortized variational inference algorithm on top of libtorch.}
+}
 }
 \section{Methods}{
 

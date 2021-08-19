@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETM.R
 \name{as.matrix.ETM}
 \alias{as.matrix.ETM}
-\title{Get matrices out of the ETM object}
+\title{Get matrices out of an ETM object}
 \usage{
 \method{as.matrix}{ETM}(x, type = c("embedding", "beta"), which = c("topics", "words"), ...)
 }

@@ -1,9 +1,11 @@
 
-#' @title Topic Modelling in Embedding Spaces
+#' @title Topic Modelling in Semantic Embedding Spaces
 #' @description ETM is a generative topic model combining traditional topic models (LDA) with word embeddings (word2vec). \cr
-#' It models each word with a categorical distribution whose natural parameter is the inner product between
-#' a word embedding and an embedding of its assigned topic.\cr
-#' The model is fitted using an amortized variational inference algorithm on top of libtorch.
+#' \itemize{
+#' \item{It models each word with a categorical distribution whose natural parameter is the inner product between
+#' a word embedding and an embedding of its assigned topic.}
+#' \item{The model is fitted using an amortized variational inference algorithm on top of libtorch.}
+#' }
 #' @param k the number of topics to extract
 #' @param embeddings either a matrix with pretrained word embeddings or an integer with the dimension of the word embeddings. Defaults to 50 if not provided.
 #' @param dim dimension of the variational inference hyperparameter theta (passed on to \code{\link[torch]{nn_linear}}). Defaults to 800.
@@ -475,7 +477,7 @@ split_train_test <- function(x, train_pct = 0.7){
 
 
 
-#' @title Get predictions from an embedding topic model
+#' @title Predict to which ETM topic a text belongs
 #' @description Predict functionality for an \code{ETM} object
 #' @param object an object of class \code{ETM}
 #' @param type either 'topics' or 'terms'
@@ -530,7 +532,7 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 }
 
 
-#' @title Get matrices out of the ETM object
+#' @title Get matrices out of an ETM object
 #' @description Convenience functions to extract embeddings of the cluster centers, the word embeddings
 #' and the word emittance by each topic called beta which is technically the softmax-transformed inner product of word embedding and topic embeddings
 #' @param x an object of class \code{ETM}
@@ -592,3 +594,55 @@ plot.ETM <- function(x, type = c("loss", "topics"), ...){
     .NotYetImplemented()
   }
 }
+
+
+#' @title Project ETM embeddings using UMAP
+#' @description Uses the uwot package to map the word embeddings and the center of the topic embeddings to a 2-dimensional space
+#' @param object object of class \code{ETM}
+#' @param type character string with the type of summary. Defaults to 'umap'.
+#' @param n_components the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}
+#' @param top_n passed on to \code{\link{predict.ETM}} to get the top_n most relevant words for each topic in the 2-dimensional space
+#' @param ... further arguments passed onto \code{\link[uwot]{umap}}
+#' @seealso \code{\link[uwot]{umap}}
+#' @export
+summary.ETM <- function(object, type = c("umap"), n_components = 2, top_n = 20, ...){
+  type <- match.arg(type)
+  if(type == "umap"){
+    requireNamespace("uwot")
+    centers    <- as.matrix(object, type = "embedding", which = "topics")
+    embeddings <- as.matrix(object, type = "embedding", which = "words")
+    manifold   <- uwot::umap(embeddings, n_components = n_components, ret_model = TRUE, ...)
+    centers    <- uwot::umap_transform(X = centers, model = manifold)
+    words      <- manifold$embedding
+    rownames(words)   <- rownames(embeddings)
+    rownames(centers) <- rownames(centers)
+    
+    terminology <- predict(object, type = "terms", top_n = top_n)
+    terminology <- mapply(seq_along(terminology), terminology, FUN = function(topicnr, terminology){
+      terminology$cluster <- rep(topicnr, nrow(terminology))
+      terminology
+    }, SIMPLIFY = FALSE)
+    terminology <- do.call(rbind, terminology)
+    space.2d.words        <- merge(x = terminology, y = data.frame(x = words[, 1], y = words[, 2], term = rownames(words), stringsAsFactors = FALSE), by = "term")
+    space.2d.centers      <- data.frame(x = centers[, 1], y = centers[, 2], term = paste("Cluster-", seq_len(nrow(centers)), sep = ""), cluster = seq_len(nrow(centers)), stringsAsFactors = FALSE)
+    space.2d.words$type   <- rep("words", nrow(space.2d.words))
+    space.2d.words        <- space.2d.words[order(space.2d.words$cluster, space.2d.words$rank, decreasing = FALSE), ]
+    space.2d.centers$type <- rep("centers", nrow(space.2d.centers))
+    space.2d.centers$rank <- rep(0L, nrow(space.2d.centers))
+    space.2d.centers$beta <- rep(NA_real_, nrow(space.2d.centers))
+    fields <- c("type", "term", "cluster", "rank", "beta", "x", "y")
+    df <- rbind(space.2d.words[, fields], space.2d.centers[, fields])
+    df <- split(df, df$cluster)
+    df <- lapply(df, FUN = function(x){
+      x$weight <- ifelse(is.na(x$beta), 0.8, x$beta / max(x$beta, na.rm = TRUE))
+      x
+    }) 
+    df <- do.call(rbind, df)
+    rownames(df) <- NULL
+    list(center = centers, words = words, embed_2d = df)
+  }else{
+    .NotYetImplemented()
+  }
+}
+
+
