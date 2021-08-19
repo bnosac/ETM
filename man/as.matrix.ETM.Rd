@@ -4,12 +4,12 @@
 \alias{as.matrix.ETM}
 \title{Get matrices out of the ETM object}
 \usage{
-\method{as.matrix}{ETM}(x, type = c("embedding", "gamma"), which = c("topics", "words"), ...)
+\method{as.matrix}{ETM}(x, type = c("embedding", "beta"), which = c("topics", "words"), ...)
 }
 \arguments{
 \item{x}{an object of class \code{ETM}}
 
-\item{type}{character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.}
+\item{type}{character string with the type of information to extract: either 'beta', 'embedding'. Defaults to 'embedding'.}
 
 \item{which}{if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.}
 
@@ -17,5 +17,5 @@
 }
 \description{
 Convenience functions to extract embeddings of the cluster centers, the word embeddings
-and the word emittance by each topic called gamma which is technically the softmax-transformed inner product of word embedding and topic embeddings
+and the word emittance by each topic called beta which is technically the softmax-transformed inner product of word embedding and topic embeddings
 }

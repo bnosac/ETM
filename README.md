@@ -107,7 +107,7 @@ plot(model, type = "loss")
 terminology  <- predict(model, type = "terms", top_n = 5)
 terminology
 [[1]]
-              term      gamma
+              term       beta
 3891 zelfstandigen 0.05245856
 2543      opdeling 0.02827548
 5469  werkloosheid 0.02366866
@@ -115,7 +115,7 @@ terminology
 4957  zelfstandige 0.01139760
 
 [[2]]
-              term       gamma
+              term        beta
 3891 zelfstandigen 0.032309771
 5469  werkloosheid 0.021119611
 4957  zelfstandige 0.010217560
@@ -123,7 +123,7 @@ terminology
 2543      opdeling 0.008961252
 
 [[3]]
-              term      gamma
+              term       beta
 2537 gedetineerden 0.02914266
 3827 nationaliteit 0.02540042
 3079    gevangenis 0.02136421
@@ -131,7 +131,7 @@ terminology
 3515  asielzoekers 0.01204639
 
 [[4]]
-             term      gamma
+             term       beta
 3435          btw 0.02814350
 5536    kostprijs 0.02012880
 3508          pod 0.01218093
@@ -139,7 +139,7 @@ terminology
 2996 vennootschap 0.01015108
 
 [[5]]
-               term       gamma
+               term        beta
 3372        verbaal 0.011172118
 3264    politiezone 0.008422602
 3546 arrondissement 0.007855867
@@ -147,7 +147,7 @@ terminology
 2543       opdeling 0.007149355
 
 [[6]]
-                  term      gamma
+                  term       beta
 3296        instelling 0.04442037
 3540 wetenschappelijke 0.03434755
 2652             china 0.02702594
@@ -155,7 +155,7 @@ terminology
 3893          hongkong 0.01792639
 
 [[7]]
-               term       gamma
+               term        beta
 2133       databank 0.003111386
 3079     gevangenis 0.002650804
 3255            dvz 0.002098217
@@ -163,7 +163,7 @@ terminology
 2142 geneesmiddelen 0.001791468
 
 [[8]]
-         term      gamma
+         term       beta
 2547 defensie 0.03706463
 3785  kabinet 0.01323747
 4054  griekse 0.01317877
@@ -171,7 +171,7 @@ terminology
 3076    leger 0.00964661
 
 [[9]]
-            term       gamma
+            term        beta
 3649        nmbs 0.005472604
 3704      beslag 0.004442090
 2457   nucleaire 0.003911803
@@ -179,7 +179,7 @@ terminology
 3533   materiaal 0.003513884
 
 [[10]]
-               term       gamma
+               term        beta
 4586   politiezones 0.017413139
 2248     voertuigen 0.012508971
 3649           nmbs 0.008157282
@@ -187,7 +187,7 @@ terminology
 3863        beelden 0.006747020
 
 [[11]]
-              term       gamma
+              term        beta
 3827 nationaliteit 0.009992087
 4912        duitse 0.008966853
 3484       turkije 0.008940011
@@ -195,7 +195,7 @@ terminology
 4008  overeenkomst 0.007879931
 
 [[12]]
-           term       gamma
+           term        beta
 3651 opsplitsen 0.008752496
 4247   kinderen 0.006497230
 2606  sciensano 0.006430181
@@ -203,7 +203,7 @@ terminology
 3587  studenten 0.006165542
 
 [[13]]
-               term       gamma
+               term        beta
 3052      inbreuken 0.007657704
 2447          drugs 0.006734609
 2195      meldingen 0.005259825
@@ -211,7 +211,7 @@ terminology
 3625 cyberaanvallen 0.004269334
 
 [[14]]
-         term      gamma
+         term       beta
 2234 gebouwen 0.06128503
 3531 digitale 0.03030998
 3895    bpost 0.02974019
@@ -219,7 +219,7 @@ terminology
 3224 infrabel 0.01758554
 
 [[15]]
-         term      gamma
+         term       beta
 3649     nmbs 0.08117295
 3826  station 0.03944306
 3911    trein 0.03548101
@@ -227,7 +227,7 @@ terminology
 3117 stations 0.02732874
 
 [[16]]
-                term      gamma
+                term       beta
 3649            nmbs 0.06778506
 3240 personeelsleden 0.03363639
 2972        telewerk 0.01857295
@@ -235,7 +235,7 @@ terminology
 3785         kabinet 0.01702784
 
 [[17]]
-                 term       gamma
+                 term        beta
 2371              app 0.009092372
 3265          stoffen 0.006641808
 2461      mondmaskers 0.006462210
@@ -243,7 +243,7 @@ terminology
 2319         websites 0.005372964
 
 [[18]]
-         term      gamma
+         term       beta
 5296 aangifte 0.01940070
 3435      btw 0.01360575
 2762      vzw 0.01307520
@@ -251,7 +251,7 @@ terminology
 2658 rekenhof 0.01196285
 
 [[19]]
-               term       gamma
+               term        beta
 3631      beperking 0.017481016
 3069       handicap 0.010403863
 3905 tewerkstelling 0.009714387
@@ -259,7 +259,7 @@ terminology
 2600      ombudsman 0.006074827
 
 [[20]]
-          term      gamma
+          term       beta
 3228    geweld 0.05881281
 4178   vrouwen 0.05113553
 4247  kinderen 0.04818219
@@ -315,7 +315,7 @@ df           <- list(words   = merge(x = terminology,
                                           term = paste("Cluster-", seq_len(nrow(centers)), sep = ""), 
                                           cluster = seq_len(nrow(centers))))
 df           <- rbindlist(df, use.names = TRUE, fill = TRUE, idcol = "type")
-df           <- df[, weight := ifelse(is.na(gamma), 0.8, gamma / max(gamma, na.rm = TRUE)), by = list(cluster)]
+df           <- df[, weight := ifelse(is.na(beta), 0.8, beta / max(beta, na.rm = TRUE)), by = list(cluster)]
 
 library(textplot)
 library(ggrepel)

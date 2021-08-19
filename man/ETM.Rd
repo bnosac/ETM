@@ -145,7 +145,7 @@ plot(test$epoch, test$loss)
 
 topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
 word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
-topic.terminology <- as.matrix(model, type = "gamma")
+topic.terminology <- as.matrix(model, type = "beta")
 
 terminology <- predict(model, type = "terms", top_n = 4)
 terminology

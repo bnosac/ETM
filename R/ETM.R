@@ -116,7 +116,7 @@
 #' 
 #' topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
 #' word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
-#' topic.terminology <- as.matrix(model, type = "gamma")
+#' topic.terminology <- as.matrix(model, type = "beta")
 #' 
 #' terminology <- predict(model, type = "terms", top_n = 4)
 #' terminology
@@ -273,8 +273,8 @@ ETM <- nn_module(
       for(k in seq_len(self$num_topics)){
         gamma <- gammas[k, ]
         gamma <- as.numeric(gamma) 
-        gamma <- data.frame(term = self$vocab, gamma = gamma, stringsAsFactors = FALSE)
-        gamma <- gamma[order(gamma$gamma, decreasing = TRUE), ]
+        gamma <- data.frame(term = self$vocab, beta = gamma, stringsAsFactors = FALSE)
+        gamma <- gamma[order(gamma$beta, decreasing = TRUE), ]
         gamma$rank <- seq_len(nrow(gamma))
         out[[k]] <- head(gamma, n = top_n)
       }
@@ -532,13 +532,13 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 
 #' @title Get matrices out of the ETM object
 #' @description Convenience functions to extract embeddings of the cluster centers, the word embeddings
-#' and the word emittance by each topic called gamma which is technically the softmax-transformed inner product of word embedding and topic embeddings
+#' and the word emittance by each topic called beta which is technically the softmax-transformed inner product of word embedding and topic embeddings
 #' @param x an object of class \code{ETM}
-#' @param type character string with the type of information to extract: either 'gamma', 'embedding'. Defaults to 'embedding'.
+#' @param type character string with the type of information to extract: either 'beta', 'embedding'. Defaults to 'embedding'.
 #' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
 #' @param ... not used
 #' @export
-as.matrix.ETM <- function(x, type = c("embedding", "gamma"), which = c("topics", "words"), ...){
+as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", "words"), ...){
   type  <- match.arg(type)
   which <- match.arg(which)
   self <- x
@@ -554,7 +554,7 @@ as.matrix.ETM <- function(x, type = c("embedding", "gamma"), which = c("topics",
         rownames(out) <- self$vocab
       })
     }
-  }else if(type == "gamma"){
+  }else if(type == "beta"){
     with_no_grad({
       gammas <- self$get_beta()
       gammas <- as.matrix(gammas)
