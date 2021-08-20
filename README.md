@@ -286,7 +286,26 @@ model <- torch_load("my_etm.ckpt")
 
 Example plot shown above was created using the following code
 
+- This uses R package textplot >= 0.2.0 (https://github.com/bnosac/textplot) which was update on CRAN on 2021-08-18
+- The summary function maps the learned embeddings of the words and cluster centers in 2D and textplot_embedding_2d plots the selected clusters of interest to plot
+
+```
+library(textplot)
+library(uwot)
+library(ggrepel)
+library(ggalt)
+manifolded <- summary(model, type = "umap", n_components = 2, metric = "cosine", n_neighbors = 15, 
+                      fast_sgd = FALSE, n_threads = 2, verbose = TRUE)
+space      <- subset(manifolded$embed_2d, type %in% "centers")
+textplot_embedding_2d(space)
+space      <- subset(manifolded$embed_2d, cluster %in% c(12, 14, 9, 7) & rank <= 7)
+textplot_embedding_2d(space, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", 
+                      encircle = FALSE, points = TRUE)
+```
+
 ![](tools/example-visualisation-basic.png)
+
+#### z. Or you can brew up your own code to plot things
 
 - Put embeddings of words and cluster centers in 2D using UMAP
 
