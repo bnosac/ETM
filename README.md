@@ -286,8 +286,8 @@ model <- torch_load("my_etm.ckpt")
 
 Example plot shown above was created using the following code
 
-- This uses R package textplot >= 0.2.0 (https://github.com/bnosac/textplot) which was update on CRAN on 2021-08-18
-- The summary function maps the learned embeddings of the words and cluster centers in 2D and textplot_embedding_2d plots the selected clusters of interest to plot
+- This uses R package [textplot](https://github.com/bnosac/textplot) >= 0.2.0 which was updated on CRAN on 2021-08-18
+- The summary function maps the learned embeddings of the words and cluster centers in 2D using [UMAP](https://github.com/jlmelville/uwot) and textplot_embedding_2d plots the selected clusters of interest in 2D
 
 ```
 library(textplot)
