@@ -4,7 +4,7 @@
 \alias{summary.ETM}
 \title{Project ETM embeddings using UMAP}
 \usage{
-\method{summary}{ETM}(object, type = c("umap"), n_components = 2, top_n = 7, ...)
+\method{summary}{ETM}(object, type = c("umap"), n_components = 2, top_n = 20, ...)
 }
 \arguments{
 \item{object}{object of class \code{ETM}}
