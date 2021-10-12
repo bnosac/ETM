@@ -51,6 +51,7 @@ jobs:
           install.packages("torch")
           install.packages("word2vec")
           install.packages("udpipe")
+          install.packages("uwot")
           install.packages("tinytest")
           install.packages("rcmdcheck")
           library(torch)
