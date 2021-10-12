@@ -111,6 +111,7 @@ if (torch::torch_is_installed()) {
         ## as well as the progress of the loss, kl_theta, nelbo which are all the same
         ## Unfortunately this doesn's make a test 100% bullet proof on libtorch apparently 
         ## we noticed all parameters are the same when comparing R / Python implementation even including the backward step but when doing optimizer.step, the results diverge
+        ## namely at https://github.com/bnosac/ETM/blob/master/R/ETM.R#L323
         ## probably this is something we can't make an end-to-end unit test for and we should make an issue at the torch repository
         ##
         #v <- model$get_beta()
