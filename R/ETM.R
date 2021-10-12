@@ -111,8 +111,8 @@
 #' test2     <- list(tokens = ng20$bow_ts_h2$tokens, counts = ng20$bow_ts_h2$counts, vocab = vocab)
 #' 
 #' out <- model$fit_original(data = traindata, test1 = test1, test2 = test2, epoch = 4, 
-#'                  optimizer = optimizer, batch_size = 1000, 
-#'                  lr_anneal_factor = 4, lr_anneal_nonmono = 10)
+#'                           optimizer = optimizer, batch_size = 1000, 
+#'                           lr_anneal_factor = 4, lr_anneal_nonmono = 10)
 #' test <- subset(out$loss, out$loss$batch_is_last == TRUE)
 #' plot(test$epoch, test$loss)
 #' 
@@ -167,6 +167,7 @@ ETM <- nn_module(
     
     self$activation    <- activation
     self$theta_act     <- get_activation(activation)
+
     
     ## define the word embedding matrix \rho
     if(train_embeddings){
@@ -283,7 +284,7 @@ ETM <- nn_module(
     })
     out
   },
-  train_epoch = function(tokencounts, optimizer, epoch, batch_size, normalize = TRUE, clip = 0){
+  train_epoch = function(tokencounts, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, permute = TRUE){
     self$train()
     train_tokens   <- tokencounts$tokens
     train_counts   <- tokencounts$counts
@@ -292,8 +293,12 @@ ETM <- nn_module(
     acc_loss          <- 0
     acc_kl_theta_loss <- 0
     cnt               <- 0
-    indices           <- torch_randperm(num_docs_train) + 1
-    #indices <- torch_tensor(seq_len(num_docs_train))
+    if(permute){
+      indices         <- torch_randperm(num_docs_train) + 1  
+    }else{
+      ## For comparing end-to-end run and unit testing
+      indices         <- torch_tensor(seq_len(num_docs_train))
+    }
     indices           <- torch_split(indices, batch_size)
     losses            <- list()
     for(i in seq_along(indices)){
@@ -307,7 +312,7 @@ ETM <- nn_module(
       }else{
         normalized_data_batch <- data_batch
       }
-      #as.matrix(self$q_theta(data_batch[1:2, , drop = FALSE]))
+      #as.matrix(self$q_theta(data_batch[1:10, , drop = FALSE]))
       out <- self$forward(data_batch, normalized_data_batch)
       total_loss <- out$recon_loss + out$kld_theta
       total_loss$backward()
@@ -400,7 +405,7 @@ ETM <- nn_module(
     self$loss_fit <- loss_evolution
     invisible(loss_evolution)
   },
-  fit_original = function(data, test1, test2, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10){
+  fit_original = function(data, test1, test2, optimizer, epoch, batch_size, normalize = TRUE, clip = 0, lr_anneal_factor = 4, lr_anneal_nonmono = 10, permute = TRUE){
     epochs       <- epoch
     anneal_lr    <- lr_anneal_factor > 0
     best_epoch   <- 0
@@ -408,7 +413,7 @@ ETM <- nn_module(
     all_val_ppls <- c()
     losses       <- list()
     for(epoch in seq_len(epochs)){
-      lossevolution   <- self$train_epoch(tokencounts = data, optimizer = optimizer, epoch = epoch, batch_size = batch_size, normalize = normalize, clip = clip)
+      lossevolution   <- self$train_epoch(tokencounts = data, optimizer = optimizer, epoch = epoch, batch_size = batch_size, normalize = normalize, clip = clip, permute = permute)
       losses[[epoch]] <- lossevolution
       val_ppl         <- self$evaluate(test1, test2, batch_size = batch_size, normalize = normalize)
       if(val_ppl < best_val_ppl){
