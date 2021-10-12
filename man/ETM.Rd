@@ -140,8 +140,8 @@ test1     <- list(tokens = ng20$bow_ts_h1$tokens, counts = ng20$bow_ts_h1$counts
 test2     <- list(tokens = ng20$bow_ts_h2$tokens, counts = ng20$bow_ts_h2$counts, vocab = vocab)
 
 out <- model$fit_original(data = traindata, test1 = test1, test2 = test2, epoch = 4, 
-                 optimizer = optimizer, batch_size = 1000, 
-                 lr_anneal_factor = 4, lr_anneal_nonmono = 10)
+                          optimizer = optimizer, batch_size = 1000, 
+                          lr_anneal_factor = 4, lr_anneal_nonmono = 10)
 test <- subset(out$loss, out$loss$batch_is_last == TRUE)
 plot(test$epoch, test$loss)
 
