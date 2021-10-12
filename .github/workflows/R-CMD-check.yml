@@ -37,6 +37,7 @@ jobs:
       - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
+      - uses: r-lib/actions/setup-pandoc@master
 
       - name: Cache R packages
         if: runner.os != 'Windows'
@@ -55,7 +56,7 @@ jobs:
           install.packages("tinytest")
           install.packages("rcmdcheck")
           library(torch)
-          install_torch()
+          install_torch(version = "1.9.0")
         shell: Rscript {0}
 
       - name: Session info
