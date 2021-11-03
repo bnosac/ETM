@@ -692,9 +692,6 @@ plot.ETM <- function(x, type = c("loss", "topics"), which, top_n = 4,
     plot(combined$epoch, combined$loss_test, xlab = "Epoch", ylab = "exp(loss)", main = "Avg batch loss evolution\non 30% test set", col = "purple", type = "b", pch = 20, lty = 2)
   }else{
     requireNamespace("textplot")
-    requireNamespace("uwot")
-    requireNamespace("ggrepel")
-    requireNamespace("ggalt")
     manifolded <- summary(x, top_n = top_n, ...)
     space      <- manifolded$embed_2d
     if(!missing(which)){
