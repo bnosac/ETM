@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 dev
 .github
+inst/tinytest
