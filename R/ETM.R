@@ -564,25 +564,23 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 
 
 #' @title Get matrices out of an ETM object
-#' @description Convenience functions to extract embeddings of the cluster centers, the word embeddings
-#' and the word emittance by each topic called beta which is technically the softmax-transformed inner product of word embedding and topic embeddings
+#' @description Convenience functions to extract 
+#' \itemize{
+#' \item{embeddings of the cluster centers}
+#' \item{embeddings of the words used in the model}
+#' \item{words emmitted by each topic (beta), which is the softmax-transformed inner product of word embedding and topic embeddings}
+#' }
 #' @param x an object of class \code{ETM}
 #' @param type character string with the type of information to extract: either 'beta', 'embedding'. Defaults to 'embedding'.
-#' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
+#' @param which a character string with either 'words' or 'topics' to get the specific embedding. Defaults to 'topics'. Only used if type = 'embedding'.
 #' @param ... not used
 #' @seealso \code{\link{ETM}}
-#' @return a numeric matrix with either the
-#' \itemize{
-#' \item{embeddings of the topic centers}
-#' \item{embeddings of the words used in the model}
-#' \item{words emmitted by each topic}
-#' }
+#' @return a numeric matrix
 #' @export
 #' @examples 
 #' \dontshow{if(require(torch) && torch::torch_is_installed())
 #' \{
 #' }
-#' 
 #' library(torch)
 #' library(topicmodels.etm)
 #' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
@@ -591,7 +589,6 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 #' topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
 #' word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
 #' topic.terminology <- as.matrix(model, type = "beta")
-#' 
 #' \dontshow{
 #' \}
 #' # End of main if statement running only if the torch is properly installed
@@ -624,30 +621,32 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 }
 
 #' @title Plot functionality for an ETM object 
-#' @description Convenience function allowing to plot the evolution of the loss and to plot a model in 2D dimensional space using umap projection as specified in 
-#' \code{\link{summary.ETM}}. The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from R package textplot.
+#' @description Convenience function allowing to plot 
+#' \itemize{
+#' \item{the evolution of the loss on the training / test set}
+#' \item{a model in 2D dimensional space using a umap projection. 
+#' The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from the textplot R package.}
+#' }
 #' @param x an object of class \code{ETM}
 #' @param type character string with the type of plot, either 'loss' or 'topics'
-#' @param which an integer vector of cluster numbers to plot, used in case type = 'topics'
+#' @param which an integer vector of clusters to plot, used in case type = 'topics'. Defaults to all clusters.
 #' @param top_n passed on to \code{summary.ETM} in order to visualise the top_n most relevant words for each topic. Defaults to 4.
 #' @param title passed on to textplot_embedding_2d, used in case type = 'topics'
 #' @param subtitle passed on to textplot_embedding_2d, used in case type = 'topics'
 #' @param encircle passed on to textplot_embedding_2d, used in case type = 'topics'
 #' @param points passed on to textplot_embedding_2d, used in case type = 'topics'
 #' @param ... arguments passed on to \code{\link{summary.ETM}}
-#' @seealso \code{\link{ETM}}, \code{\link{summary.ETM}}
+#' @seealso \code{\link{ETM}}, \code{\link{summary.ETM}}, \code{\link[textplot]{textplot_embedding_2d}}
 #' @export
 #' @examples
 #' \dontshow{if(require(torch) && torch::torch_is_installed())
 #' \{
 #' }
-#' 
 #' library(torch)
 #' library(topicmodels.etm)
 #' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
 #' model <- torch_load(path)
 #' plot(model, type = "loss")
-#' 
 #' \dontshow{
 #' \}
 #' # End of main if statement running only if the torch is properly installed
@@ -657,7 +656,6 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 #'              require(textplot) && require(uwot) && require(ggrepel) && require(ggalt))
 #' \{
 #' }
-#' 
 #' library(torch)
 #' library(topicmodels.etm)
 #' library(textplot)
@@ -669,8 +667,6 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 #' plot(model, type = "topics", top_n = 5, which = c(11, 1, 9, 19),
 #'      metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
 #'      title = "ETM Topics example")
-#' 
-#' 
 #' \dontshow{
 #' \}
 #' # End of main if statement running only if the torch is properly installed
@@ -712,12 +708,12 @@ plot.ETM <- function(x, type = c("loss", "topics"), which, top_n = 4,
 #' @title Project ETM embeddings using UMAP
 #' @description Uses the uwot package to map the word embeddings and the center of the topic embeddings to a 2-dimensional space
 #' @param object object of class \code{ETM}
-#' @param type character string with the type of summary. Defaults to 'umap'.
-#' @param n_components the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}
-#' @param top_n passed on to \code{\link{predict.ETM}} to get the top_n most relevant words for each topic in the 2-dimensional space
+#' @param type character string with the type of summary to extract. Defaults to 'umap', no other summary information currently implemented.
+#' @param n_components the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}. Defaults to 2.
+#' @param top_n passed on to \code{\link{predict.ETM}} to get the \code{top_n} most relevant words for each topic in the 2-dimensional space
 #' @param ... further arguments passed onto \code{\link[uwot]{umap}}
 #' @seealso \code{\link[uwot]{umap}}, \code{\link{ETM}}
-#' @return as list with elements
+#' @return a list with elements
 #' \itemize{
 #' \item{center: a matrix with the embeddings of the topic centers}
 #' \item{words: a matrix with the embeddings of the words}
@@ -730,7 +726,6 @@ plot.ETM <- function(x, type = c("loss", "topics"), which, top_n = 4,
 #' \dontshow{if(require(torch) && torch::torch_is_installed() && require(uwot))
 #' \{
 #' }
-#' 
 #' library(torch)
 #' library(topicmodels.etm)
 #' library(uwot)
@@ -741,7 +736,6 @@ plot.ETM <- function(x, type = c("loss", "topics"), which, top_n = 4,
 #'                     fast_sgd = FALSE, n_threads = 1, verbose = TRUE) 
 #' overview$center
 #' overview$embed_2d
-#' 
 #' \dontshow{
 #' \}
 #' # End of main if statement running only if the torch is properly installed

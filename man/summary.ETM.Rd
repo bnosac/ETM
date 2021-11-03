@@ -9,16 +9,16 @@
 \arguments{
 \item{object}{object of class \code{ETM}}
 
-\item{type}{character string with the type of summary. Defaults to 'umap'.}
+\item{type}{character string with the type of summary to extract. Defaults to 'umap', no other summary information currently implemented.}
 
-\item{n_components}{the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}}
+\item{n_components}{the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}. Defaults to 2.}
 
-\item{top_n}{passed on to \code{\link{predict.ETM}} to get the top_n most relevant words for each topic in the 2-dimensional space}
+\item{top_n}{passed on to \code{\link{predict.ETM}} to get the \code{top_n} most relevant words for each topic in the 2-dimensional space}
 
 \item{...}{further arguments passed onto \code{\link[uwot]{umap}}}
 }
 \value{
-as list with elements
+a list with elements
 \itemize{
 \item{center: a matrix with the embeddings of the topic centers}
 \item{words: a matrix with the embeddings of the words}
@@ -34,7 +34,6 @@ Uses the uwot package to map the word embeddings and the center of the topic emb
 \dontshow{if(require(torch) && torch::torch_is_installed() && require(uwot))
 \{
 }
-
 library(torch)
 library(topicmodels.etm)
 library(uwot)
@@ -45,7 +44,6 @@ overview <- summary(model,
                     fast_sgd = FALSE, n_threads = 1, verbose = TRUE) 
 overview$center
 overview$embed_2d
-
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed

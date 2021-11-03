@@ -21,7 +21,7 @@
 
 \item{type}{character string with the type of plot, either 'loss' or 'topics'}
 
-\item{which}{an integer vector of cluster numbers to plot, used in case type = 'topics'}
+\item{which}{an integer vector of clusters to plot, used in case type = 'topics'. Defaults to all clusters.}
 
 \item{top_n}{passed on to \code{summary.ETM} in order to visualise the top_n most relevant words for each topic. Defaults to 4.}
 
@@ -36,20 +36,22 @@
 \item{...}{arguments passed on to \code{\link{summary.ETM}}}
 }
 \description{
-Convenience function allowing to plot the evolution of the loss and to plot a model in 2D dimensional space using umap projection as specified in 
-\code{\link{summary.ETM}}. The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from R package textplot.
+Convenience function allowing to plot 
+\itemize{
+\item{the evolution of the loss on the training / test set}
+\item{a model in 2D dimensional space using a umap projection. 
+The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from the textplot R package.}
+}
 }
 \examples{
 \dontshow{if(require(torch) && torch::torch_is_installed())
 \{
 }
-
 library(torch)
 library(topicmodels.etm)
 path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
 model <- torch_load(path)
 plot(model, type = "loss")
-
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed
@@ -59,7 +61,6 @@ plot(model, type = "loss")
              require(textplot) && require(uwot) && require(ggrepel) && require(ggalt))
 \{
 }
-
 library(torch)
 library(topicmodels.etm)
 library(textplot)
@@ -71,13 +72,11 @@ model <- torch_load(path)
 plot(model, type = "topics", top_n = 5, which = c(11, 1, 9, 19),
      metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
      title = "ETM Topics example")
-
-
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed
 }
 }
 \seealso{
-\code{\link{ETM}}, \code{\link{summary.ETM}}
+\code{\link{ETM}}, \code{\link{summary.ETM}}, \code{\link[textplot]{textplot_embedding_2d}}
 }
