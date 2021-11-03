@@ -55,6 +55,9 @@ jobs:
           install.packages("uwot")
           install.packages("tinytest")
           install.packages("rcmdcheck")
+          install.packages("textplot")
+          install.packages("ggrepl")
+          install.packages("ggalt")
           library(torch)
           install_torch(version = "1.9.0")
         shell: Rscript {0}
