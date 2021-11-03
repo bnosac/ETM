@@ -56,7 +56,7 @@ jobs:
           install.packages("tinytest")
           install.packages("rcmdcheck")
           install.packages("textplot")
-          install.packages("ggrepl")
+          install.packages("ggrepel")
           install.packages("ggalt")
           library(torch)
           install_torch(version = "1.9.0")
