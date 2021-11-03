@@ -491,7 +491,33 @@ split_train_test <- function(x, train_pct = 0.7){
 #' @param normalize logical indicating to normalize the bag of words data
 #' @param top_n integer with number of most relevant words for each topic to extract
 #' @param ... not used
+#' @seealso \code{\link{ETM}}
 #' @export
+#' @examples 
+#' \dontshow{if(require(torch) && torch::torch_is_installed())
+#' \{
+#' }
+#' 
+#' library(torch)
+#' library(topicmodels.etm)
+#' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+#' model <- torch_load(path)
+#' 
+#' # Get most emitted words for each topic
+#' terminology  <- predict(model, type = "terms", top_n = 5)
+#' terminology
+#' 
+#' # Get topics probabilities for each document
+#' path   <- system.file(package = "topicmodels.etm", "example", "example_dtm.rds")
+#' dtm    <- readRDS(path)
+#' dtm    <- head(dtm, n = 5)
+#' scores <- predict(model, newdata = dtm, type = "topics")
+#' scores
+#' 
+#' \dontshow{
+#' \}
+#' # End of main if statement running only if the torch is properly installed
+#' }
 predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size = nrow(newdata), normalize = TRUE, top_n = 10, ...){
   type <- match.arg(type)
   if(type == "terms"){
@@ -544,7 +570,32 @@ predict.ETM <- function(object, newdata, type = c("topics", "terms"), batch_size
 #' @param type character string with the type of information to extract: either 'beta', 'embedding'. Defaults to 'embedding'.
 #' @param which if type is set to 'embedding', which embedding, either 'words' or 'topics'. Defaults to 'topics'.
 #' @param ... not used
+#' @seealso \code{\link{ETM}}
+#' @return a numeric matrix with either the
+#' \itemize{
+#' \item{embeddings of the topic centers}
+#' \item{embeddings of the words used in the model}
+#' \item{words emmitted by each topic}
+#' }
 #' @export
+#' @examples 
+#' \dontshow{if(require(torch) && torch::torch_is_installed())
+#' \{
+#' }
+#' 
+#' library(torch)
+#' library(topicmodels.etm)
+#' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+#' model <- torch_load(path)
+#' 
+#' topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
+#' word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
+#' topic.terminology <- as.matrix(model, type = "beta")
+#' 
+#' \dontshow{
+#' \}
+#' # End of main if statement running only if the torch is properly installed
+#' }
 as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", "words"), ...){
   type  <- match.arg(type)
   which <- match.arg(which)
@@ -573,12 +624,60 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 }
 
 #' @title Plot functionality for an ETM object 
-#' @description Convenience function allowing to plot the evolution of the loss
+#' @description Convenience function allowing to plot the evolution of the loss and to plot a model in 2D dimensional space using umap projection as specified in 
+#' \code{\link{summary.ETM}}. The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from R package textplot.
 #' @param x an object of class \code{ETM}
 #' @param type character string with the type of plot, either 'loss' or 'topics'
-#' @param ... not used
+#' @param which an integer vector of cluster numbers to plot, used in case type = 'topics'
+#' @param top_n passed on to \code{summary.ETM} in order to visualise the top_n most relevant words for each topic. Defaults to 4.
+#' @param title passed on to textplot_embedding_2d, used in case type = 'topics'
+#' @param subtitle passed on to textplot_embedding_2d, used in case type = 'topics'
+#' @param encircle passed on to textplot_embedding_2d, used in case type = 'topics'
+#' @param points passed on to textplot_embedding_2d, used in case type = 'topics'
+#' @param ... arguments passed on to \code{\link{summary.ETM}}
+#' @seealso \code{\link{ETM}}, \code{\link{summary.ETM}}
 #' @export
-plot.ETM <- function(x, type = c("loss", "topics"), ...){
+#' @examples
+#' \dontshow{if(require(torch) && torch::torch_is_installed())
+#' \{
+#' }
+#' 
+#' library(torch)
+#' library(topicmodels.etm)
+#' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+#' model <- torch_load(path)
+#' plot(model, type = "loss")
+#' 
+#' \dontshow{
+#' \}
+#' # End of main if statement running only if the torch is properly installed
+#' }
+#' 
+#' \dontshow{if(require(torch) && torch::torch_is_installed() && 
+#'              require(textplot) && require(uwot) && require(ggrepel) && require(ggalt))
+#' \{
+#' }
+#' 
+#' library(torch)
+#' library(topicmodels.etm)
+#' library(textplot)
+#' library(uwot)
+#' library(ggrepel)
+#' library(ggalt)
+#' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+#' model <- torch_load(path)
+#' plot(model, type = "topics", top_n = 5, which = c(11, 1, 9, 19),
+#'      metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
+#'      title = "ETM Topics example")
+#' 
+#' 
+#' \dontshow{
+#' \}
+#' # End of main if statement running only if the torch is properly installed
+#' }
+plot.ETM <- function(x, type = c("loss", "topics"), which, top_n = 4, 
+                     title = "ETM clusters", subtitle = "", 
+                     encircle = FALSE, points = FALSE, ...){
   type <- match.arg(type)
   if(type == "loss"){
     loss_evolution <- x$loss_fit
@@ -596,7 +695,16 @@ plot.ETM <- function(x, type = c("loss", "topics"), ...){
     plot(combined$epoch, combined$loss, xlab = "Epoch", ylab = "loss", main = "Avg batch loss evolution\non 70% training set", col = "steelblue", type = "b", pch = 20, lty = 2)
     plot(combined$epoch, combined$loss_test, xlab = "Epoch", ylab = "exp(loss)", main = "Avg batch loss evolution\non 30% test set", col = "purple", type = "b", pch = 20, lty = 2)
   }else{
-    .NotYetImplemented()
+    requireNamespace("textplot")
+    requireNamespace("uwot")
+    requireNamespace("ggrepel")
+    requireNamespace("ggalt")
+    manifolded <- summary(x, top_n = top_n, ...)
+    space      <- manifolded$embed_2d
+    if(!missing(which)){
+      space      <- space[space$cluster %in% which, ]
+    }
+    textplot::textplot_embedding_2d(space, title = title, subtitle = subtitle, encircle = encircle, points = points)
   }
 }
 
@@ -608,8 +716,36 @@ plot.ETM <- function(x, type = c("loss", "topics"), ...){
 #' @param n_components the dimension of the space to embed into. Passed on to \code{\link[uwot]{umap}}
 #' @param top_n passed on to \code{\link{predict.ETM}} to get the top_n most relevant words for each topic in the 2-dimensional space
 #' @param ... further arguments passed onto \code{\link[uwot]{umap}}
-#' @seealso \code{\link[uwot]{umap}}
+#' @seealso \code{\link[uwot]{umap}}, \code{\link{ETM}}
+#' @return as list with elements
+#' \itemize{
+#' \item{center: a matrix with the embeddings of the topic centers}
+#' \item{words: a matrix with the embeddings of the words}
+#' \item{embed_2d: a data.frame which contains a lower dimensional presentation in 2D of the topics and the top_n words associated with
+#' the topic, containing columns type, term, cluster, rank, beta, x, y, weight; where type is either words or centers, x/y contain the lower dimensional 
+#' positions in 2D of the word and weight is the emitted beta scaled to the highest beta within a cluster and the cluster center always gets weight 0.8}
+#' }
 #' @export
+#' @examples
+#' \dontshow{if(require(torch) && torch::torch_is_installed() && require(uwot))
+#' \{
+#' }
+#' 
+#' library(torch)
+#' library(topicmodels.etm)
+#' library(uwot)
+#' path     <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+#' model    <- torch_load(path)
+#' overview <- summary(model, 
+#'                     metric = "cosine", n_neighbors = 15, 
+#'                     fast_sgd = FALSE, n_threads = 1, verbose = TRUE) 
+#' overview$center
+#' overview$embed_2d
+#' 
+#' \dontshow{
+#' \}
+#' # End of main if statement running only if the torch is properly installed
+#' }
 summary.ETM <- function(object, type = c("umap"), n_components = 2, top_n = 20, ...){
   type <- match.arg(type)
   if(type == "umap"){

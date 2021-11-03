@@ -4,15 +4,80 @@
 \alias{plot.ETM}
 \title{Plot functionality for an ETM object}
 \usage{
-\method{plot}{ETM}(x, type = c("loss", "topics"), ...)
+\method{plot}{ETM}(
+  x,
+  type = c("loss", "topics"),
+  which,
+  top_n = 4,
+  title = "ETM clusters",
+  subtitle = "",
+  encircle = FALSE,
+  points = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{ETM}}
 
 \item{type}{character string with the type of plot, either 'loss' or 'topics'}
 
-\item{...}{not used}
+\item{which}{an integer vector of cluster numbers to plot, used in case type = 'topics'}
+
+\item{top_n}{passed on to \code{summary.ETM} in order to visualise the top_n most relevant words for each topic. Defaults to 4.}
+
+\item{title}{passed on to textplot_embedding_2d, used in case type = 'topics'}
+
+\item{subtitle}{passed on to textplot_embedding_2d, used in case type = 'topics'}
+
+\item{encircle}{passed on to textplot_embedding_2d, used in case type = 'topics'}
+
+\item{points}{passed on to textplot_embedding_2d, used in case type = 'topics'}
+
+\item{...}{arguments passed on to \code{\link{summary.ETM}}}
 }
 \description{
-Convenience function allowing to plot the evolution of the loss
+Convenience function allowing to plot the evolution of the loss and to plot a model in 2D dimensional space using umap projection as specified in 
+\code{\link{summary.ETM}}. The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from R package textplot.
+}
+\examples{
+\dontshow{if(require(torch) && torch::torch_is_installed())
+\{
+}
+
+library(torch)
+library(topicmodels.etm)
+path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+model <- torch_load(path)
+plot(model, type = "loss")
+
+\dontshow{
+\}
+# End of main if statement running only if the torch is properly installed
+}
+
+\dontshow{if(require(torch) && torch::torch_is_installed() && 
+             require(textplot) && require(uwot) && require(ggrepel) && require(ggalt))
+\{
+}
+
+library(torch)
+library(topicmodels.etm)
+library(textplot)
+library(uwot)
+library(ggrepel)
+library(ggalt)
+path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+model <- torch_load(path)
+plot(model, type = "topics", top_n = 5, which = c(11, 1, 9, 19),
+     metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
+     title = "ETM Topics example")
+
+
+\dontshow{
+\}
+# End of main if statement running only if the torch is properly installed
+}
+}
+\seealso{
+\code{\link{ETM}}, \code{\link{summary.ETM}}
 }

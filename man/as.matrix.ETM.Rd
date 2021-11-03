@@ -15,7 +15,37 @@
 
 \item{...}{not used}
 }
+\value{
+a numeric matrix with either the
+\itemize{
+\item{embeddings of the topic centers}
+\item{embeddings of the words used in the model}
+\item{words emmitted by each topic}
+}
+}
 \description{
 Convenience functions to extract embeddings of the cluster centers, the word embeddings
 and the word emittance by each topic called beta which is technically the softmax-transformed inner product of word embedding and topic embeddings
+}
+\examples{
+\dontshow{if(require(torch) && torch::torch_is_installed())
+\{
+}
+
+library(torch)
+library(topicmodels.etm)
+path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+model <- torch_load(path)
+
+topic.centers     <- as.matrix(model, type = "embedding", which = "topics")
+word.embeddings   <- as.matrix(model, type = "embedding", which = "words")
+topic.terminology <- as.matrix(model, type = "beta")
+
+\dontshow{
+\}
+# End of main if statement running only if the torch is properly installed
+}
+}
+\seealso{
+\code{\link{ETM}}
 }

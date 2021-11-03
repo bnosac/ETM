@@ -17,9 +17,40 @@
 
 \item{...}{further arguments passed onto \code{\link[uwot]{umap}}}
 }
+\value{
+as list with elements
+\itemize{
+\item{center: a matrix with the embeddings of the topic centers}
+\item{words: a matrix with the embeddings of the words}
+\item{embed_2d: a data.frame which contains a lower dimensional presentation in 2D of the topics and the top_n words associated with
+the topic, containing columns type, term, cluster, rank, beta, x, y, weight; where type is either words or centers, x/y contain the lower dimensional 
+positions in 2D of the word and weight is the emitted beta scaled to the highest beta within a cluster and the cluster center always gets weight 0.8}
+}
+}
 \description{
 Uses the uwot package to map the word embeddings and the center of the topic embeddings to a 2-dimensional space
 }
+\examples{
+\dontshow{if(require(torch) && torch::torch_is_installed() && require(uwot))
+\{
+}
+
+library(torch)
+library(topicmodels.etm)
+library(uwot)
+path     <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+model    <- torch_load(path)
+overview <- summary(model, 
+                    metric = "cosine", n_neighbors = 15, 
+                    fast_sgd = FALSE, n_threads = 1, verbose = TRUE) 
+overview$center
+overview$embed_2d
+
+\dontshow{
+\}
+# End of main if statement running only if the torch is properly installed
+}
+}
 \seealso{
-\code{\link[uwot]{umap}}
+\code{\link[uwot]{umap}}, \code{\link{ETM}}
 }

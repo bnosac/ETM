@@ -32,3 +32,32 @@
 \description{
 Predict functionality for an \code{ETM} object
 }
+\examples{
+\dontshow{if(require(torch) && torch::torch_is_installed())
+\{
+}
+
+library(torch)
+library(topicmodels.etm)
+path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
+model <- torch_load(path)
+
+# Get most emitted words for each topic
+terminology  <- predict(model, type = "terms", top_n = 5)
+terminology
+
+# Get topics probabilities for each document
+path   <- system.file(package = "topicmodels.etm", "example", "example_dtm.rds")
+dtm    <- readRDS(path)
+dtm    <- head(dtm, n = 5)
+scores <- predict(model, newdata = dtm, type = "topics")
+scores
+
+\dontshow{
+\}
+# End of main if statement running only if the torch is properly installed
+}
+}
+\seealso{
+\code{\link{ETM}}
+}
