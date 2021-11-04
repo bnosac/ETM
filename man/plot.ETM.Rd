@@ -69,9 +69,11 @@ library(ggrepel)
 library(ggalt)
 path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
 model <- torch_load(path)
-plot(model, type = "topics", top_n = 5, which = c(11, 1, 9, 19),
+plot(model, type = "topics", top_n = 7, which = c(1, 2, 14, 16, 18, 19),
      metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
      title = "ETM Topics example")
+     
+     
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed
