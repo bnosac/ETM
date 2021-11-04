@@ -11,7 +11,16 @@ This repository contains an R package called `topicmodels.etm` which is an imple
 
 ### Installation
 
-This R package is not on CRAN (yet), for now, you can install it as follows 
+- For installing the package from CRAN: 
+
+```
+pkgs <- c("torch", "topicmodels.etm", "word2vec", "doc2vec", "udpipe", "uwot")
+install.packages(pkgs)
+library(torch)
+library(topicmodels.etm)
+```
+
+- For installing the development version of this package: you can perform the following installations in R:
 
 ```
 install.packages("torch")
@@ -23,7 +32,13 @@ library(torch)
 remotes::install_github('bnosac/ETM', INSTALL_opts = '--no-multiarch')
 ```
 
-Once the package has some plotting functionalities, I'll push it on CRAN.
+- For allowing to plot the models:
+
+```
+install.packages("textplot")
+install.packages("ggrepel")
+install.packages("ggalt")
+```
 
 ### Example
 
@@ -278,8 +293,8 @@ scores
 #### f. Save / Load model
 
 ```
-torch_save(model, "my_etm.ckpt")
-model <- torch_load("my_etm.ckpt")
+torch_save(model, "example_etm.ckpt")
+model <- torch_load("example_etm.ckpt")
 ```
 
 #### g. Optionally - visualise the model in 2D
