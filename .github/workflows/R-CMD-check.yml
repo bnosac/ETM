@@ -32,6 +32,10 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
       - uses: r-lib/actions/setup-pandoc@master
+      
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: rcmdcheck
 
       - name: Cache R packages
         if: runner.os != 'Windows'
@@ -48,7 +52,6 @@ jobs:
           install.packages("udpipe")
           install.packages("uwot")
           install.packages("tinytest")
-          install.packages("rcmdcheck")
           install.packages("textplot")
           install.packages("ggrepel")
           install.packages("ggalt")
