@@ -9,7 +9,7 @@
   type = c("loss", "topics"),
   which,
   top_n = 4,
-  title = "ETM clusters",
+  title = "ETM topics",
   subtitle = "",
   encircle = FALSE,
   points = FALSE,
@@ -19,9 +19,9 @@
 \arguments{
 \item{x}{an object of class \code{ETM}}
 
-\item{type}{character string with the type of plot, either 'loss' or 'topics'}
+\item{type}{character string with the type of plot to generate: either 'loss' or 'topics'}
 
-\item{which}{an integer vector of clusters to plot, used in case type = 'topics'. Defaults to all clusters.}
+\item{which}{an integer vector of topics to plot, used in case type = 'topics'. Defaults to all topics. See the example below.}
 
 \item{top_n}{passed on to \code{summary.ETM} in order to visualise the top_n most relevant words for each topic. Defaults to 4.}
 
@@ -35,12 +35,18 @@
 
 \item{...}{arguments passed on to \code{\link{summary.ETM}}}
 }
+\value{
+In case \code{type} is set to 'topics', maps the topic centers and most emitted words for each topic
+to 2D using \code{\link{summary.ETM}} and returns a ggplot object by calling \code{\link[textplot]{textplot_embedding_2d}}. \cr
+For type 'loss', makes a base graphics plot and returns invisibly nothing.
+}
 \description{
 Convenience function allowing to plot 
 \itemize{
-\item{the evolution of the loss on the training / test set}
-\item{a model in 2D dimensional space using a umap projection. 
-The topic plot uses function \code{\link[textplot]{textplot_embedding_2d}} from the textplot R package.}
+\item{the evolution of the loss on the training / test set in order to inspect training convergence}
+\item{the \code{ETM} model in 2D dimensional space using a umap projection. 
+This plot uses function \code{\link[textplot]{textplot_embedding_2d}} from the textplot R package and
+plots the top_n most emitted words of each topic and the topic centers in 2 dimensions}
 }
 }
 \examples{
@@ -69,11 +75,11 @@ library(ggrepel)
 library(ggalt)
 path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
 model <- torch_load(path)
-plot(model, type = "topics", top_n = 7, which = c(1, 2, 14, 16, 18, 19),
-     metric = "cosine", n_neighbors = 15, fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
-     title = "ETM Topics example")
-     
-     
+plt   <- plot(model, type = "topics", top_n = 7, which = c(1, 2, 14, 16, 18, 19),
+              metric = "cosine", n_neighbors = 15, 
+              fast_sgd = FALSE, n_threads = 2, verbose = TRUE,
+              title = "ETM Topics example")
+plt
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed

@@ -302,7 +302,7 @@ model <- torch_load("example_etm.ckpt")
 Example plot shown above was created using the following code
 
 - This uses R package [textplot](https://github.com/bnosac/textplot) >= 0.2.0 which was updated on CRAN on 2021-08-18
-- The summary function maps the learned embeddings of the words and cluster centers in 2D using [UMAP](https://github.com/jlmelville/uwot) and textplot_embedding_2d plots the selected clusters of interest in 2D
+- The summary function maps the learned embeddings of the words and topic centers in 2D using [UMAP](https://github.com/jlmelville/uwot) and textplot_embedding_2d plots the selected topics of interest in 2D
 
 ```
 library(textplot)
@@ -314,7 +314,7 @@ manifolded <- summary(model, type = "umap", n_components = 2, metric = "cosine",
 space      <- subset(manifolded$embed_2d, type %in% "centers")
 textplot_embedding_2d(space)
 space      <- subset(manifolded$embed_2d, cluster %in% c(12, 14, 9, 7) & rank <= 7)
-textplot_embedding_2d(space, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", 
+textplot_embedding_2d(space, title = "ETM topics", subtitle = "embedded in 2D using UMAP", 
                       encircle = FALSE, points = TRUE)
 ```
 
@@ -322,7 +322,7 @@ textplot_embedding_2d(space, title = "ETM clusters", subtitle = "embedded in 2D 
 
 #### z. Or you can brew up your own code to plot things
 
-- Put embeddings of words and cluster centers in 2D using UMAP
+- Put embeddings of words and topic centers in 2D using UMAP
 
 ```
 library(uwot)
@@ -335,7 +335,7 @@ centers    <- umap_transform(X = centers, model = manifold)
 words      <- manifold$embedding
 ```
 
-- Plot words in 2D, color by cluster and add cluster centers in 2D 
+- Plot words in 2D, color by topic and add topic centers in 2D 
     - This uses R package textplot >= 0.2.0 (https://github.com/bnosac/textplot) which was put on CRAN on 2021-08-18
 
 ```
@@ -346,7 +346,7 @@ df           <- list(words   = merge(x = terminology,
                                      y = data.frame(x = words[, 1], y = words[, 2], term = rownames(embeddings)), 
                                      by = "term"), 
                      centers = data.frame(x = centers[, 1], y = centers[, 2], 
-                                          term = paste("Cluster-", seq_len(nrow(centers)), sep = ""), 
+                                          term = paste("Topic-", seq_len(nrow(centers)), sep = ""), 
                                           cluster = seq_len(nrow(centers))))
 df           <- rbindlist(df, use.names = TRUE, fill = TRUE, idcol = "type")
 df           <- df[, weight := ifelse(is.na(beta), 0.8, beta / max(beta, na.rm = TRUE)), by = list(cluster)]
@@ -355,8 +355,8 @@ library(textplot)
 library(ggrepel)
 library(ggalt)
 x <- subset(df, type %in% c("words", "centers") & cluster %in% c(1, 3, 4, 8))
-textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = FALSE, points = FALSE)
-textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D using UMAP", encircle = TRUE, points = TRUE)
+textplot_embedding_2d(x, title = "ETM topics", subtitle = "embedded in 2D using UMAP", encircle = FALSE, points = FALSE)
+textplot_embedding_2d(x, title = "ETM topics", subtitle = "embedded in 2D using UMAP", encircle = TRUE, points = TRUE)
 ```
 
 -  Or if you like writing down the full ggplot2 code 
@@ -364,17 +364,17 @@ textplot_embedding_2d(x, title = "ETM clusters", subtitle = "embedded in 2D usin
 ```
 library(ggplot2)
 library(ggrepel)
-x$cluster   <- factor(x$cluster)
-plt <- ggplot(x, 
-    aes(x = x, y = y, label = term, color = cluster, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
+x$topic <- factor(x$cluster)
+plt     <- ggplot(x, 
+    aes(x = x, y = y, label = term, color = topic, cex = weight, pch = factor(type, levels = c("centers", "words")))) + 
     geom_text_repel(show.legend = FALSE) + 
     theme_void() + 
-    labs(title = "ETM clusters", subtitle = "embedded in 2D using UMAP")
+    labs(title = "ETM topics", subtitle = "embedded in 2D using UMAP")
 plt + geom_point(show.legend = FALSE)
 
-## encircle if clusters are non-overlapping can provide nice visualisations
+## encircle if topics are non-overlapping can provide nice visualisations
 library(ggalt)
-plt + geom_encircle(aes(group = cluster, fill = cluster), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
+plt + geom_encircle(aes(group = topic, fill = topic), alpha = 0.4, show.legend = FALSE) + geom_point(show.legend = FALSE)
 ```
 
 > More examples are provided in the help of the ETM function see `?ETM`

@@ -9,19 +9,20 @@
 \arguments{
 \item{x}{an object of class \code{ETM}}
 
-\item{type}{character string with the type of information to extract: either 'beta', 'embedding'. Defaults to 'embedding'.}
+\item{type}{character string with the type of information to extract: either 'beta' (words emttied by each topic) or 'embedding' (embeddings of words or topic centers). Defaults to 'embedding'.}
 
-\item{which}{a character string with either 'words' or 'topics' to get the specific embedding. Defaults to 'topics'. Only used if type = 'embedding'.}
+\item{which}{a character string with either 'words' or 'topics' to get either the embeddings of the words used in the model or the embedding of the topic centers. Defaults to 'topics'. Only used if type = 'embedding'.}
 
 \item{...}{not used}
 }
 \value{
-a numeric matrix
+a numeric matrix containing, depending on the value supplied in \code{type} 
+either the embeddings of the topic centers, the embeddings of the words or the words emitted by each topic
 }
 \description{
-Convenience functions to extract 
+Convenience function to extract 
 \itemize{
-\item{embeddings of the cluster centers}
+\item{embeddings of the topic centers}
 \item{embeddings of the words used in the model}
 \item{words emmitted by each topic (beta), which is the softmax-transformed inner product of word embedding and topic embeddings}
 }

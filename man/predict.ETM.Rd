@@ -2,7 +2,7 @@
 % Please edit documentation in R/ETM.R
 \name{predict.ETM}
 \alias{predict.ETM}
-\title{Predict to which ETM topic a text belongs}
+\title{Predict functionality for an ETM object.}
 \usage{
 \method{predict}{ETM}(
   object,
@@ -17,26 +17,36 @@
 \arguments{
 \item{object}{an object of class \code{ETM}}
 
-\item{newdata}{bag of words document term matrix in \code{dgCMatrix} format}
+\item{newdata}{bag of words document term matrix in \code{dgCMatrix} format. Only used in case type = 'topics'.}
 
-\item{type}{either 'topics' or 'terms'}
+\item{type}{a character string with either 'topics' or 'terms' indicating to either predict to which
+topic a document encoded as a set of bag of words belongs to or to extract the most emitted terms for each topic}
 
-\item{batch_size}{integer with the size of the batch}
+\item{batch_size}{integer with the size of the batch in order to do chunkwise predictions in chunks of \code{batch_size} rows. Defaults to the whole dataset provided in \code{newdata}.
+Only used in case type = 'topics'.}
 
-\item{normalize}{logical indicating to normalize the bag of words data}
+\item{normalize}{logical indicating to normalize the bag of words data. Defaults to \code{TRUE} similar as the default when building the \code{ETM} model. 
+Only used in case type = 'topics'.}
 
-\item{top_n}{integer with number of most relevant words for each topic to extract}
+\item{top_n}{integer with the number of most relevant words for each topic to extract. Only used in case type = 'terms'.}
 
 \item{...}{not used}
 }
+\value{
+Returns for
+\itemize{
+\item{type 'topics': a matrix with topic probabilities of dimension nrow(newdata) x the number of topics}
+\item{type 'terms': a list of data.frame's where each data.frame has columns term, beta and rank indicating the
+top_n most emitted terms for that topic. List element 1 corresponds to the top terms emitted by topic 1, element 2 to topic 2 ...}
+}
+}
 \description{
-Predict functionality for an \code{ETM} object
+Predict to which ETM topic a text belongs or extract which words are emitted for each topic.
 }
 \examples{
 \dontshow{if(require(torch) && torch::torch_is_installed())
 \{
 }
-
 library(torch)
 library(topicmodels.etm)
 path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
@@ -52,7 +62,6 @@ dtm    <- readRDS(path)
 dtm    <- head(dtm, n = 5)
 scores <- predict(model, newdata = dtm, type = "topics")
 scores
-
 \dontshow{
 \}
 # End of main if statement running only if the torch is properly installed
