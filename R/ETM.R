@@ -15,11 +15,11 @@
 #' @references \url{https://arxiv.org/pdf/1907.04907.pdf}
 #' @return an object of class ETM which is a torch \code{nn_module} containing o.a.
 #' \itemize{
-#'   \item{num_topics: }{the number of topics}
-#'   \item{vocab: }{character vector with the terminology used in the model}
-#'   \item{vocab_size: }{the number of words in \code{vocab}}
-#'   \item{rho: }{The word embeddings}
-#'   \item{alphas: }{The topic embeddings}
+#'   \item num_topics: the number of topics
+#'   \item vocab: character vector with the terminology used in the model
+#'   \item vocab_size: the number of words in \code{vocab}
+#'   \item rho: The word embeddings
+#'   \item alphas: The topic embeddings
 #' }
 #' @section Methods:
 #' \describe{

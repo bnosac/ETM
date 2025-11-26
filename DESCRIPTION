@@ -30,4 +30,4 @@ Suggests:
     textplot (>= 0.2.0),
     ggrepel,
     ggalt
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2

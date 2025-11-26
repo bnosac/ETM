@@ -8,8 +8,7 @@ ETM(
   k = 20,
   embeddings,
   dim = 800,
-  activation = c("relu", "tanh", "softplus", "rrelu", "leakyrelu", "elu", "selu",
-    "glu"),
+  activation = c("relu", "tanh", "softplus", "rrelu", "leakyrelu", "elu", "selu", "glu"),
   dropout = 0.5,
   vocab = rownames(embeddings)
 )
@@ -30,11 +29,11 @@ ETM(
 \value{
 an object of class ETM which is a torch \code{nn_module} containing o.a.
 \itemize{
-  \item{num_topics: }{the number of topics}
-  \item{vocab: }{character vector with the terminology used in the model}
-  \item{vocab_size: }{the number of words in \code{vocab}}
-  \item{rho: }{The word embeddings}
-  \item{alphas: }{The topic embeddings}
+  \item num_topics: the number of topics
+  \item vocab: character vector with the terminology used in the model
+  \item vocab_size: the number of words in \code{vocab}
+  \item rho: The word embeddings
+  \item alphas: The topic embeddings
 }
 }
 \description{
