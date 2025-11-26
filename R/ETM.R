@@ -668,7 +668,7 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 #' }
 #' 
 #' \dontshow{if(require(torch) && torch::torch_is_installed() && 
-#'              require(textplot) && require(uwot) && require(ggrepel) && require(ggalt))
+#'              require(textplot) && require(uwot) && require(ggrepel))
 #' \{
 #' }
 #' library(torch)
@@ -676,7 +676,6 @@ as.matrix.ETM <- function(x, type = c("embedding", "beta"), which = c("topics", 
 #' library(textplot)
 #' library(uwot)
 #' library(ggrepel)
-#' library(ggalt)
 #' path  <- system.file(package = "topicmodels.etm", "example", "example_etm.ckpt")
 #' model <- torch_load(path)
 #' plt   <- plot(model, type = "topics", top_n = 7, which = c(1, 2, 14, 16, 18, 19),
